@@ -1,0 +1,7 @@
+
+// Thumbnail lodZero size
+lodZeroMinification = 0.05f;		// default 5%
+
+// Thumbnail sizing
+minSize = 256;
+maxSize = 256;

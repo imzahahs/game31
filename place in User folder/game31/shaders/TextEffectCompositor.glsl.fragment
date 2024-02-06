@@ -1,0 +1,26 @@
+
+#ifdef GL_ES
+#define LOWP lowp
+precision mediump float;
+#else
+#define LOWP 
+#endif
+
+varying vec2 v_texCoords;
+
+uniform sampler2D u_texture;
+
+uniform vec4 u_color;
+
+uniform float u_blackThreshold;
+uniform float u_whiteThreshold;
+
+void main() {
+		float effect = texture2D(u_texture, v_texCoords).r;
+		
+		effect = smoothstep(u_blackThreshold, u_whiteThreshold, effect);
+		
+		vec4 col = vec4(1.0, 1.0, 1.0, effect) * u_color;
+		
+		gl_FragColor = col;
+}

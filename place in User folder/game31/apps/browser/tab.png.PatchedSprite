@@ -1,0 +1,3 @@
+
+materialCornerWidth = 128f / 256f;
+materialCornerHeight = 66f / 256f;

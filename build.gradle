@@ -1,0 +1,160 @@
+buildscript {
+    
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        jcenter()
+        maven {
+            url 'https://maven.google.com/'
+            name 'Google'
+        }
+
+        maven { url 'https://maven.fabric.io/public' }
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.3.3'
+
+        classpath 'io.fabric.tools:gradle:1.+'
+    }
+}
+
+allprojects {
+    apply plugin: "eclipse"
+    apply plugin: "idea"
+
+    version = '1.0'
+    ext {
+        appName = "game31"
+        gdxVersion = '1.9.9-SNAPSHOT'
+        roboVMVersion = '2.3.1'
+        box2DLightsVersion = '1.4'
+        ashleyVersion = '1.7.0'
+        aiVersion = '1.8.0'
+    }
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+        maven {
+            url 'https://maven.google.com/'
+            name 'Google'
+        }
+        maven { url "https://jitpack.io" }
+    }
+}
+
+project(":desktop") {
+    apply plugin: "java"
+
+
+    dependencies {
+        compile project(":core")
+        compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
+        compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+        compile "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
+
+        // Steamworks4j
+        compile "com.code-disaster.steamworks4j:steamworks4j:1.7.0"
+
+        // Swingbits for TaskDialog (but its old)
+        compile group: 'org.bidib.org.oxbow', name: 'swingbits', version: '1.2.2'
+    }
+}
+
+project(":android") {
+    apply plugin: "android"
+    apply plugin: 'io.fabric'
+
+    configurations { natives }
+
+    repositories {
+        maven { url 'https://maven.fabric.io/public' }
+
+        maven {
+            url "https://dl.bintray.com/ironsource-mobile/android-sdk"
+        }
+        maven {
+            url 'https://dl.bintray.com/ironsource-mobile/android-adapters'
+        }
+
+
+        maven { url "https://jcenter.bintray.com" }
+    }
+
+    dependencies {
+        compile project(":core")
+        compile "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
+        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi"
+        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a"
+        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-arm64-v8a"
+        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86"
+        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86_64"
+        compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+        natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-armeabi"
+        natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-armeabi-v7a"
+        natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-arm64-v8a"
+        natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-x86"
+        natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-x86_64"
+
+        // Crashlytics & Answers
+        compile('com.crashlytics.sdk.android:crashlytics:2.9.1@aar') {
+            transitive = true;
+        }
+        compile('com.crashlytics.sdk.android:answers:1.4.1@aar') {
+            transitive = true;
+        }
+
+        // Permissions handler
+        compile 'com.karumi:dexter:4.2.0'
+
+        // Alert dialog
+        compile 'cn.pedant.sweetalert:library:1.3'
+
+        // APK expansion
+        compile 'com.github.bolein.better-apk-expansion:downloader_library:5.0.3'
+
+        // Google Play Game Services
+        compile 'com.google.android.gms:play-services-games:15.0.1'
+        compile 'com.google.android.gms:play-services-auth:16.0.0'
+        compile 'com.google.android.gms:play-services-ads:15.0.1'
+
+        // IronSource ads
+        compile 'com.ironsource.sdk:mediationsdk:6.7.11@jar'
+        // Add AdMob Network
+        compile 'com.ironsource.adapters:admobadapter:4.2.2@jar'
+        // Add Chartboost Network
+        compile 'com.ironsource.adapters:chartboostadapter:4.1.5@jar'
+        // Add Tapjoy Network
+        compile 'com.ironsource.adapters:tapjoyadapter:4.1.3@jar'
+        // Add UnityAds Network
+        compile 'com.ironsource.adapters:unityadsadapter:4.1.2@jar'
+
+        // Multidex support
+        compile 'com.android.support:multidex:1.0.3'
+
+        // v4 support required by ironsource
+        // compile 'com.android.support:support-compat:28.0.0'
+
+        // Billing
+        compile 'com.anjlab.android.iab.v3:library:1.0.44'
+    }
+}
+
+project(":core") {
+    apply plugin: "java"
+
+
+    dependencies {
+        compile "com.badlogicgames.gdx:gdx:$gdxVersion"
+        compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+
+    }
+}
+
+tasks.eclipse.doLast {
+    delete ".project"
+}

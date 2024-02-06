@@ -1,0 +1,11 @@
+
+
+// Require mipmapping for performance and quality
+mipmapping = true;
+magFilter = TextureFilter.Linear;
+minFilter = TextureFilter.MipMapLinearLinear;
+
+// Quickly recover memory
+tGarbageTime = 3.0f;
+
+isStreamed = false;

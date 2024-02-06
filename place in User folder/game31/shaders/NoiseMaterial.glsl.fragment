@@ -1,0 +1,44 @@
+
+#ifdef GL_ES
+#define LOWP lowp
+precision mediump float;
+#else
+#define LOWP 
+#endif
+
+varying vec2 v_texCoords;
+
+uniform vec4 u_color;
+
+uniform sampler2D u_texture;
+
+uniform float u_time;
+uniform vec2 u_resolution;
+
+
+vec3 rand(vec2 coord) {
+    vec3 a = fract(cos(coord.x * 0.0083 + coord.y ) * vec3(130.0, 470.0, 290.0));
+    vec3 b = fract(sin(coord.x * 0.0083 + coord.y ) * vec3(800.0, 100.0, 10.0));
+    vec3 c = mix(a, b, 0.5);
+    return c;
+}
+
+
+void main() {
+
+	vec2 uv = gl_FragCoord.xy / u_resolution;
+
+    vec4 texColor = texture2D(u_texture, v_texCoords) * u_color;
+	
+	// Look like a slower frame rate
+    float frameScale = 24.0;
+    float frameTime = floor(u_time * frameScale) / frameScale;
+	
+    vec4 color = vec4(rand(uv * sin(10.0 * frameTime)), 1.) - 0.5;
+	color.rgb += texColor.rgb;
+	color.a = texColor.a;
+  	
+	gl_FragColor = color;
+	
+	
+}

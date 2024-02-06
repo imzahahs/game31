@@ -1,0 +1,30 @@
+
+#ifdef GL_ES
+#define LOWP lowp
+precision mediump float;
+#else
+#define LOWP 
+#endif
+
+varying vec2 v_texCoords;
+
+uniform sampler2D u_planeY;
+uniform sampler2D u_planeU;
+uniform sampler2D u_planeV;
+
+void main() {
+	float y = texture2D(u_planeY, v_texCoords).a;
+	float u = texture2D(u_planeU, v_texCoords).a;
+	float v = texture2D(u_planeV, v_texCoords).a;
+
+	u = u - 0.5;
+	v = v - 0.5;
+
+	float r = y + (1.370705 * v);
+	float g = y - (0.337633 * u) - (0.698001 * v);
+	float b = y + (1.732446 * u);
+	
+	vec3 col = (vec3(r, g, b) - (16.0 / 255.0)) * (255.0 / 216.0);
+	
+	gl_FragColor = vec4(col, 1.0);
+}

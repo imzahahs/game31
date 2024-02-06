@@ -1,0 +1,78 @@
+
+#ifdef GL_ES
+#define LOWP lowp
+precision highp float;
+#else
+#define LOWP 
+#endif
+
+#define ITER 3			// previously 3
+#define SIZE 8.0
+
+varying vec2 v_texCoords;
+varying float v_x;
+
+uniform sampler2D u_texture;
+uniform sampler2D u_alphaTexture;
+
+uniform vec4 u_color;
+
+uniform vec2 u_resolution;
+uniform float u_time;
+
+
+// Can go down to 10 or so, and still be usable, probably...
+#define ITERATIONS 20
+
+// Set this to 0.0 to stop the pixel movement.
+#define TIME iGlobalTime
+
+#define TAU  6.28318530718
+
+//-------------------------------------------------------------------------------------------
+// Use last part of hash function to generate new random radius and angle...
+vec2 Sample(inout vec2 r)
+{
+    r = fract(r * vec2(33.3983, 43.4427));
+    return r-.5;
+    //return sqrt(r.x+.001) * vec2(sin(r.y * TAU), cos(r.y * TAU))*.5; // <<=== circular sampling.
+}
+
+//-------------------------------------------------------------------------------------------
+#define HASHSCALE 443.8975
+vec2 Hash22(vec2 p)
+{
+	vec3 p3 = fract(vec3(p.xyx) * HASHSCALE);
+    p3 += dot(p3, p3.yzx+19.19);
+    return fract(vec2((p3.x + p3.y)*p3.z, (p3.x+p3.z)*p3.y));
+}
+
+//-------------------------------------------------------------------------------------------
+vec3 Blur(vec2 uv, float radius)
+{
+	radius = radius * .04;
+    
+    vec2 circle = vec2(radius) * vec2((u_resolution.y / u_resolution.x), 1.0);
+    
+	// Remove the time reference to prevent random jittering if you don't like it.
+	vec2 random = Hash22(uv + u_time);
+
+    // Do the blur here...
+	vec3 acc = vec3(0.0);
+	for (int i = 0; i < ITERATIONS; i++)
+    {
+		acc += texture2D(u_texture, uv + circle * Sample(random)).xyz;
+    }
+	return acc / float(ITERATIONS);
+}
+
+void main() {
+	
+    float radius = 2.0;
+	
+	vec4 alpha = texture2D(u_alphaTexture, vec2(v_x + 0.5, v_texCoords.y));
+ 
+    vec4 fragColor = vec4(Blur(v_texCoords, radius), alpha.r);
+	
+	gl_FragColor = fragColor * u_color;
+}

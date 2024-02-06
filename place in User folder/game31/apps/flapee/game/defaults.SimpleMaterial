@@ -1,0 +1,11 @@
+
+// These are content files, stream these
+isStreamed = true;
+
+// Max quality
+compressQuality = 1.0f;
+
+// Require mipmapping for performance and quality
+mipmapping = true;
+magFilter = TextureFilter.Linear;
+minFilter = TextureFilter.MipMapLinearLinear;

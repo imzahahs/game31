@@ -1,0 +1,28 @@
+
+#ifdef GL_ES
+#define LOWP lowp
+precision mediump float;
+#else
+#define LOWP 
+#endif
+
+varying vec2 v_texCoords;
+
+uniform vec4 u_color;
+
+uniform sampler2D u_texture;
+uniform sampler2D u_mask;
+
+uniform vec2 u_scale;
+uniform vec2 u_offset;
+
+void main() {
+
+	// Scale v_texCoords to crop u_texture if aspect ratio was different
+	vec2 textureCoords = (v_texCoords * u_scale) + u_offset;
+	
+	vec4 texColor = texture2D(u_texture, textureCoords);			// Use cropped coordinates for image
+	vec4 maskColor = texture2D(u_mask, v_texCoords);				// Use normal coordinates for mask
+	
+	gl_FragColor = u_color * texColor * maskColor;
+}

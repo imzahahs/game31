@@ -1,0 +1,57 @@
+#ifdef GL_ES
+#define LOWP lowp
+precision highp float;
+#else
+#define LOWP 
+#endif
+
+
+varying vec2 v_texCoords;
+
+uniform float u_time;
+uniform vec2 u_resolution;
+
+uniform vec4 u_color;
+
+vec3 filmGrainColor (vec2 uv, float offset) {
+
+    // Add pixel offset to generate noise for this pixel and adjacent
+    // pixels and blend them for a softer looking grain that appears
+    // larger than a pixel.
+    
+    vec4 uvs;
+    uvs.xy = uv + vec2(offset, offset);
+    uvs.zw = uvs.xy + vec2(1.0 / u_resolution.x, 1.0 / u_resolution.y);
+
+    uvs = fract(uvs * vec2(21.5932, 21.77156).xyxy);
+
+    vec2 shift = vec2(21.5351, 14.3137);
+    vec2 temp0 = uvs.xy + dot(uvs.yx, uvs.xy + shift);
+    vec2 temp1 = uvs.xw + dot(uvs.wx, uvs.xw + shift);
+    vec2 temp2 = uvs.zy + dot(uvs.yz, uvs.zy + shift);
+    vec2 temp3 = uvs.zw + dot(uvs.wz, uvs.zw + shift);
+
+    vec3 r = vec3(0.0, 0.0, 0.0);
+    r += fract(temp0.x * temp0.y * vec3(95.4337, 96.4337, 97.4337));
+    r += fract(temp1.x * temp1.y * vec3(95.4337, 96.4337, 97.4337));
+    r += fract(temp2.x * temp2.y * vec3(95.4337, 96.4337, 97.4337));
+    r += fract(temp3.x * temp3.y * vec3(95.4337, 96.4337, 97.4337));
+
+    return r * 0.25;
+}
+
+void main (void)  {
+
+	vec2 uv = v_texCoords;
+
+    // Look like a slower frame rate
+    float frameScale = (24.0);
+    float frameTime = fract(floor(mod(u_time, 10.0) * frameScale) / frameScale);
+    
+    // I like green and magenta
+    vec3  grainColor = filmGrainColor(uv, (frameTime)).xyx;
+    
+    vec3 color = grainColor;
+    
+	gl_FragColor = vec4(color.r, color.g, color.b, 1.0) * u_color;
+}

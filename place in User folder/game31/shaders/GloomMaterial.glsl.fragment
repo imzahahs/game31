@@ -1,0 +1,35 @@
+
+#ifdef GL_ES
+#define LOWP lowp
+precision mediump float;
+#else
+#define LOWP 
+#endif
+
+varying vec2 v_texCoords;
+
+uniform sampler2D u_texture;
+uniform sampler2D u_screenTexture;
+
+uniform float u_threshold;
+uniform float u_blackThreshold;
+uniform float u_whiteThreshold;
+uniform float u_alpha;
+
+void main() {
+	
+	vec3 bloom = texture2D(u_texture, v_texCoords).rgb;
+	vec3 screen = texture2D(u_screenTexture, v_texCoords).rgb;
+	
+	float bloomIntensity = (bloom.r + bloom.g + bloom.b) / 3.0; 
+	float screenIntensity = (screen.r + screen.g + screen.b) / 3.0; 
+	
+	// Grayscale
+	float r = clamp((bloomIntensity - screenIntensity) / u_threshold, 0.0, 1.0);
+	
+	// Black & white filter
+	float bw = smoothstep(u_blackThreshold, u_whiteThreshold, screenIntensity);
+	
+
+	gl_FragColor = vec4(mix(screen, vec3(bw), r * u_alpha), 1.0);
+}

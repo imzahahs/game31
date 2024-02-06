@@ -1,0 +1,5 @@
+
+import sengine.materials.SimpleMaterial;
+
+// Use normal shaders for previews
+normalShader = Shader.load(SimpleMaterial.DEFAULT_NORMAL_SHADER);

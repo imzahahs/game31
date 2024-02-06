@@ -1,0 +1,18 @@
+
+import sengine.graphics2d.Shader;
+
+// Quickly recover memory
+tGarbageTime = 3.0f;
+
+// Use pixelation shader to simulate website loading
+normalShader = Shader.load("shaders/PixelatedMaterial.glsl");
+
+
+// Max quality
+compressQuality = 1.0f;
+
+// Disable mipmapping
+mipmapping = false;
+magFilter = TextureFilter.Linear;
+minFilter = TextureFilter.Linear;
+

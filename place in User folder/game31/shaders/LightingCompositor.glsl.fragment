@@ -1,0 +1,31 @@
+
+#ifdef GL_ES
+#define LOWP lowp
+precision mediump float;
+#else
+#define LOWP 
+#endif
+
+varying vec2 v_texCoords;
+
+uniform sampler2D u_texture;
+uniform sampler2D u_lighting;
+
+uniform vec4 u_lightingColor;
+
+uniform vec4 u_raysColor;
+uniform float u_raysFog;
+
+void main() {
+	vec4 col = texture2D(u_texture, v_texCoords);
+	vec4 lighting = texture2D(u_lighting, v_texCoords);
+	
+	float b = smoothstep(0.0, 0.1, (col.r + col.g + col.b) / 3.0) * col.a;			// anything below 0.1 brightness is considered black and wont affect lighting
+
+
+	col.rgb += u_lightingColor.rgb * u_lightingColor.a * lighting.r * b;
+	
+	col.rgb = mix(col.rgb, u_raysColor.rgb, min(1.0 - col.a + (u_raysFog * b), lighting.g * u_raysColor.a));
+
+	gl_FragColor = col;
+}

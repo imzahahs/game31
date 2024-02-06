@@ -1,0 +1,51 @@
+
+#ifdef GL_ES
+#define LOWP lowp
+precision mediump float;
+#else
+#define LOWP 
+#endif
+
+#define PI 3.14159265359
+
+varying vec2 v_texCoords;
+
+uniform sampler2D u_texture;
+uniform sampler2D u_backBuffer;
+
+uniform vec2 u_resolution;
+uniform float u_time;
+uniform float u_acid;				// 1.09
+uniform float u_amount;				// 0.95 ~ 0.99
+
+#define u_baseWarpSpeed 0.5
+#define u_warp 15.0
+
+void main() {
+    vec2 vUv = gl_FragCoord.xy / u_resolution.xy;
+    vec2 texel = vec2(1.5, 1.5) / u_resolution.xy;
+    
+    vec3 uv = texture2D(u_backBuffer, vUv).xyz;
+
+	float bright = max(uv.x, max(uv.y, uv.z)) * 1.0;
+	
+	float tf = mod(u_time * u_baseWarpSpeed + vUv.x + vUv.y + bright, PI * 2.0);
+    float gt = -vUv.x * vUv.y * u_warp;
+	
+
+    vec2 d1 = texel * normalize(vec2(sin(tf + gt * uv.x), cos(tf + gt*uv.x)));
+    vec2 d2 = texel * normalize(vec2(cos(tf + gt * uv.y), sin(tf + gt*uv.y)));
+    vec2 d3 = texel * normalize(vec2(sin(tf + -gt * uv.z), cos(tf + -gt*uv.z)));
+
+    float r = texture2D(u_backBuffer, vUv+ d1 * bright).x;
+    float g = texture2D(u_backBuffer, vUv+ d2 * bright).y;
+    float b = texture2D(u_backBuffer, vUv+ d3 * bright).z;
+    
+    vec3 uvMix = mix(uv, vec3(r,g,b), u_acid);
+
+    vec3 orig = texture2D(u_texture, vUv).xyz;
+    
+	vec4 fragColor = vec4(mix(orig, uvMix, u_amount), 1.0);
+
+	gl_FragColor = fragColor;
+} 

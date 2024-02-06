@@ -1,0 +1,3 @@
+
+srcBlendFunc = GL20.GL_SRC_ALPHA;
+destBlendFunc = GL20.GL_ONE;

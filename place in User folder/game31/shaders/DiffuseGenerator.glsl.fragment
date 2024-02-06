@@ -1,0 +1,39 @@
+
+#ifdef GL_ES
+#define LOWP lowp
+precision mediump float;
+#else
+#define LOWP 
+#endif
+
+varying vec2 v_texCoords;
+
+uniform sampler2D u_texture;
+uniform sampler2D u_backBuffer;
+
+uniform vec2 u_resolution;
+uniform float u_amount;
+
+uniform float u_time;
+
+void main() {
+		vec2 centerUV = gl_FragCoord.xy / u_resolution;
+    
+		float xscale = sin(u_time * 0.125) * 2.0;
+		float yscale = sin(u_time * 0.125 * 0.5) * 4.0;
+	
+		float d = (v_texCoords.x *xscale) + (v_texCoords.y * yscale);
+	
+        // Get adjacents cells from backbuffer 
+        vec4 l = texture2D(u_backBuffer, (gl_FragCoord.xy - normalize(vec2(sin(d), cos(d))) * 0.5) / u_resolution);	// left cell
+        vec4 r = texture2D(u_backBuffer, (gl_FragCoord.xy - normalize(vec2(sin(d * -3.0), cos(d * -3.0))) * 0.5) / u_resolution);	// right cell
+        vec4 t = texture2D(u_backBuffer, (gl_FragCoord.xy - normalize(vec2(sin(d * 6.0), cos(d * 6.0))) * 0.5) / u_resolution);	// top cell
+        vec4 b = texture2D(u_backBuffer, (gl_FragCoord.xy - normalize(vec2(sin(d * -9.0), cos(d * -9.0))) * 0.5) / u_resolution);	// bottom cell
+        //vec4 c = texture2D(u_backBuffer, centerUV); 		// central cell
+        
+        // Determine highest
+        vec4 fragColor = max(l,max(r,max(t,b)));
+        
+		// Merge with actual
+		gl_FragColor = mix(fragColor, texture2D(u_texture, centerUV), u_amount);
+}

@@ -1,0 +1,12 @@
+attribute vec4 a_position;
+attribute vec2 a_texCoord0;
+
+uniform mat4 u_MVPMatrix;
+varying vec2 v_texCoords;
+varying float v_x;
+
+void main() {
+	v_texCoords = a_texCoord0;
+	v_x = a_position.x;
+	gl_Position =  u_MVPMatrix * a_position;
+}

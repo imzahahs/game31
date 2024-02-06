@@ -1,0 +1,22 @@
+import game31.*;
+import game31.renderer.*;
+
+import com.badlogic.gdx.graphics.*;
+
+import com.badlogic.gdx.graphics.Texture.TextureWrap;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
+
+
+// Disable all streaming, these are UI images, not content
+isStreamed = false;
+
+// Max quality
+compressQuality = 1.0f;
+
+
+// Require mipmapping for performance and quality
+mipmapping = true;
+magFilter = TextureFilter.Linear;
+minFilter = TextureFilter.MipMapLinearLinear;
+textureLodBias = -1.0f;		// by default use 1 higher sharper mipmap
+

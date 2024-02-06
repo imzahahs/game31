@@ -1,0 +1,33 @@
+
+#ifdef GL_ES
+#define LOWP lowp
+precision mediump float;
+#else
+#define LOWP 
+#endif
+
+varying vec2 v_texCoords;
+
+uniform vec4 u_color;
+
+uniform sampler2D u_texture;
+
+uniform vec2 u_textureResolution;
+uniform float u_pixelation;
+
+void main() {
+
+	// First calculate pixel coordinate
+	vec2 pixelCoord = v_texCoords * u_textureResolution;
+	
+	// Pixelate
+	vec2 modulus = mod(pixelCoord, u_pixelation);
+	
+	// Convert back to normalized
+	vec2 normalizedCoord = (pixelCoord - modulus) / u_textureResolution;
+	
+	// Lookup and return
+	vec4 texColor = texture2D(u_texture, normalizedCoord);
+	
+	gl_FragColor = u_color * texColor;
+}

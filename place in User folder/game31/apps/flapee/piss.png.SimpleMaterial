@@ -1,0 +1,4 @@
+
+uWrap = TextureWrap.Repeat;
+vWrap = TextureWrap.Repeat;
+
