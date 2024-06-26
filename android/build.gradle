@@ -1,16 +1,17 @@
 android {
+    namespace "com.kaigan.pipedreams"
     signingConfigs {
         config {
             keyAlias 'kaigan'
             keyPassword 'projectISO@03'
-            storeFile file('E:/proj04_base/keystores/kaigan.jks')
+            storeFile file('C:/Users/lorde/Downloads/kaigan_managed.keystore')
             storePassword 'projectISO@03'
             v1SigningEnabled true
             v2SigningEnabled true
         }
     }
-    buildToolsVersion "28.0.3"
-    compileSdkVersion 28
+//    buildToolsVersion "28.0.3"
+    //compileSdkVersion 34
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
@@ -22,29 +23,43 @@ android {
             jniLibs.srcDirs = ['libs']
         }
 
-        instrumentTest.setRoot('tests')
+        androidTest.setRoot('tests')
     }
     packagingOptions {
         exclude 'META-INF/robovm/ios/robovm.xml'
     }
     defaultConfig {
         applicationId "com.kaigan.pipedreams"
-        minSdkVersion 17
-        targetSdkVersion 28
-        versionCode 44
-        versionName "1.0.44"
+        minSdkVersion 23
+        compileSdk 34
+        targetSdkVersion 34
+        versionCode 45
+        versionName "1.0.45"
         signingConfig signingConfigs.config
         multiDexEnabled true
     }
-    dexOptions {
-        javaMaxHeapSize "4g"
-    }
+//    dexOptions {
+//        javaMaxHeapSize "4g"
+//    }
 
     buildTypes {
         release {
+            buildConfigField("long", "VERSION_CODE", "${defaultConfig.versionCode}")
+            buildConfigField("String","VERSION_NAME","\"${defaultConfig.versionName}\"")
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        debug {
+            buildConfigField("long", "VERSION_CODE", "${defaultConfig.versionCode}")
+            buildConfigField("String","VERSION_NAME","\"${defaultConfig.versionName}\"")
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    buildFeatures {
+        buildConfig true
+        renderScript true
+        aidl true
     }
 }
 
@@ -53,17 +68,17 @@ android {
 // the natives configuration, and extracts them to the proper libs/ folders
 // so they get packed with the APK.
 task copyAndroidNatives() { 
-    file("libs/armeabi/").mkdirs();
-    file("libs/armeabi-v7a/").mkdirs();
-    file("libs/arm64-v8a/").mkdirs();
-    file("libs/x86_64/").mkdirs();
-    file("libs/x86/").mkdirs();
+//    file("libs/armeabi/").mkdirs()
+    file("libs/armeabi-v7a/").mkdirs()
+    file("libs/arm64-v8a/").mkdirs()
+    file("libs/x86_64/").mkdirs()
+    file("libs/x86/").mkdirs()
 
     configurations.natives.files.each { jar ->
         def outputDir = null
         if(jar.name.endsWith("natives-arm64-v8a.jar")) outputDir = file("libs/arm64-v8a")
         if(jar.name.endsWith("natives-armeabi-v7a.jar")) outputDir = file("libs/armeabi-v7a")        
-        if(jar.name.endsWith("natives-armeabi.jar")) outputDir = file("libs/armeabi")
+//        if(jar.name.endsWith("natives-armeabi.jar")) outputDir = file("libs/armeabi")
         if(jar.name.endsWith("natives-x86_64.jar")) outputDir = file("libs/x86_64")
         if(jar.name.endsWith("natives-x86.jar")) outputDir = file("libs/x86")
         if(outputDir != null) {
@@ -75,6 +90,8 @@ task copyAndroidNatives() {
         }
     }
 }
+
+
 
 task run(type: Exec) {
     def path
@@ -97,49 +114,51 @@ task run(type: Exec) {
     def adb = path + "/platform-tools/adb"
     commandLine "$adb", 'shell', 'am', 'start', '-n', 'com.kaigan.game31/com.kaigan.pipedreams.AndroidLauncher'
 }
-
-// sets up the Android Eclipse project, using the old Ant based build.
-eclipse {
-    // need to specify Java source sets explicitly, SpringSource Gradle Eclipse plugin
-    // ignores any nodes added in classpath.file.withXml
-    sourceSets {
-        main {
-            java.srcDirs "src", 'gen'
-        }
-    }
-
-    jdt {
-        sourceCompatibility = 1.6
-        targetCompatibility = 1.6
-    }
-
-    classpath {
-        plusConfigurations += [ project.configurations.compile ]        
-        containers 'com.android.ide.eclipse.adt.ANDROID_FRAMEWORK', 'com.android.ide.eclipse.adt.LIBRARIES'       
-    }
-
-    project {
-        name = appName + "-android"
-        natures 'com.android.ide.eclipse.adt.AndroidNature'
-        buildCommands.clear();
-        buildCommand "com.android.ide.eclipse.adt.ResourceManagerBuilder"
-        buildCommand "com.android.ide.eclipse.adt.PreCompilerBuilder"
-        buildCommand "org.eclipse.jdt.core.javabuilder"
-        buildCommand "com.android.ide.eclipse.adt.ApkBuilder"
-    }
+//
+//// sets up the Android Eclipse project, using the old Ant based build.
+//eclipse {
+//    // need to specify Java source sets explicitly, SpringSource Gradle Eclipse plugin
+//    // ignores any nodes added in classpath.file.withXml
+//    sourceSets {
+//        main {
+//            java.srcDirs "src", 'gen'
+//        }
+//    }
+//
+//    jdt {
+//        sourceCompatibility = 1.6
+//        targetCompatibility = 1.6
+//    }
+//
+//    classpath {
+//        plusConfigurations += [ project.configurations.implementation ]
+//        containers 'com.android.ide.eclipse.adt.ANDROID_FRAMEWORK', 'com.android.ide.eclipse.adt.LIBRARIES'
+//    }
+//
+//    project {
+//        name = appName + "-android"
+//        natures 'com.android.ide.eclipse.adt.AndroidNature'
+//        buildCommands.clear();
+//        buildCommand "com.android.ide.eclipse.adt.ResourceManagerBuilder"
+//        buildCommand "com.android.ide.eclipse.adt.PreCompilerBuilder"
+//        buildCommand "org.eclipse.jdt.core.javabuilder"
+//        buildCommand "com.android.ide.eclipse.adt.ApkBuilder"
+//    }
+//}
+configurations {
+    resolvableImplementation.extendsFrom implementation
 }
-
 // sets up the Android Idea project, using the old Ant based build.
 idea {
     module {
-        sourceDirs += file("src");
-        scopes = [ COMPILE: [plus:[project.configurations.compile]]]        
+        sourceDirs += file("src")
+        scopes = [ COMPILE: [plus:[project.configurations.resolvableImplementation]]]
 
         iml {
             withXml {
                 def node = it.asNode()
-                def builder = NodeBuilder.newInstance();
-                builder.current = node;
+                def builder = NodeBuilder.newInstance()
+                builder.current = node
                 builder.component(name: "FacetManager") {
                     facet(type: "android", name: "Android") {
                         configuration {
@@ -150,4 +169,11 @@ idea {
             }
         }
     }
+}
+
+dependencies {
+    implementation project(':core')
+    implementation project(':core')
+    implementation project(':core')
+    implementation project(':core')
 }

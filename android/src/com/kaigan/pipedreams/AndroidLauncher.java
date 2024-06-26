@@ -5,8 +5,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.DisplayCutout;
@@ -45,11 +45,11 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.ironsource.mediationsdk.IronSource;
+import com.ironsource.mediationsdk.adunit.adapter.utility.AdInfo;
 import com.ironsource.mediationsdk.logger.IronSourceError;
 import com.ironsource.mediationsdk.model.Placement;
-import com.ironsource.mediationsdk.sdk.InternalOfferwallListener;
-import com.ironsource.mediationsdk.sdk.InterstitialListener;
-import com.ironsource.mediationsdk.sdk.RewardedVideoListener;
+import com.ironsource.mediationsdk.sdk.LevelPlayInterstitialListener;
+import com.ironsource.mediationsdk.sdk.LevelPlayRewardedVideoListener;
 
 import java.io.IOException;
 
@@ -236,14 +236,31 @@ public class AndroidLauncher extends AndroidApplication implements Game.Platform
 
     private void initializeAds() {
         // Prepare callbacks
-        IronSource.setRewardedVideoListener(new RewardedVideoListener() {
+        IronSource.setLevelPlayRewardedVideoListener(new LevelPlayRewardedVideoListener() {
             @Override
-            public void onRewardedVideoAdOpened() {
-                // ignored
+            public void onAdOpened(AdInfo adInfo) {
+
+            }
+
+
+            @Override
+            public void onAdClicked(Placement placement, AdInfo adInfo) {
+
             }
 
             @Override
-            public void onRewardedVideoAdClosed() {
+            public void onAdAvailable(AdInfo adInfo) {
+
+            }
+
+            @Override
+            public void onAdUnavailable() {
+
+            }
+
+
+            @Override
+            public void onAdClosed(AdInfo adInfo) {
                 // Show reward
                 Globals.grid.postMessage(new Runnable() {
                     @Override
@@ -262,23 +279,10 @@ public class AndroidLauncher extends AndroidApplication implements Game.Platform
                 });
             }
 
-            @Override
-            public void onRewardedVideoAvailabilityChanged(boolean b) {
-                // ignored
-            }
+
 
             @Override
-            public void onRewardedVideoAdStarted() {
-                // ignored
-            }
-
-            @Override
-            public void onRewardedVideoAdEnded() {
-                // ignored
-            }
-
-            @Override
-            public void onRewardedVideoAdRewarded(Placement placement) {
+            public void onAdRewarded(Placement placement, AdInfo adInfo) {
                 try {
                     final int credits = placement.getRewardAmount();
                     reportLog(TAG, "Received rewarded video credits: " + credits);
@@ -296,35 +300,47 @@ public class AndroidLauncher extends AndroidApplication implements Game.Platform
             }
 
             @Override
-            public void onRewardedVideoAdShowFailed(IronSourceError ironSourceError) {
+            public void onAdShowFailed(IronSourceError ironSourceError, AdInfo adInfo) {
                 reportLogError(TAG, "onRewardedVideoAdShowFailed" + ironSourceError);
-                onRewardedVideoAdClosed();      // TODO: not sure if this is needed
+                onAdClosed(adInfo);      // TODO: not sure if this is needed
             }
 
-            @Override
-            public void onRewardedVideoAdClicked(Placement placement) {
-                // ignored
-            }
+
         });
-        IronSource.setInterstitialListener(new InterstitialListener() {
+        IronSource.setLevelPlayInterstitialListener(new LevelPlayInterstitialListener() {
             @Override
-            public void onInterstitialAdReady() {
-                // ignored
+            public void onAdReady(AdInfo adInfo) {
+
             }
 
             @Override
-            public void onInterstitialAdLoadFailed(IronSourceError ironSourceError) {
+            public void onAdLoadFailed(IronSourceError ironSourceError) {
                 reportLogError(TAG, "onInterstitialAdLoadFailed: " + ironSourceError);
             }
 
             @Override
-            public void onInterstitialAdOpened() {
-                // ignored
+            public void onAdOpened(AdInfo adInfo) {
+
             }
 
             @Override
-            public void onInterstitialAdClosed() {
-                // Load another
+            public void onAdShowSucceeded(AdInfo adInfo) {
+
+            }
+
+            @Override
+            public void onAdShowFailed(IronSourceError ironSourceError, AdInfo adInfo) {
+                reportLogError(TAG, "onInterstitialAdLoadFailed: " + ironSourceError);
+            }
+
+            @Override
+            public void onAdClicked(AdInfo adInfo) {
+
+            }
+
+            @Override
+            public void onAdClosed(AdInfo adInfo) {
+            // Load another
                 IronSource.loadInterstitial();
 
                 // Show menu
@@ -337,83 +353,70 @@ public class AndroidLauncher extends AndroidApplication implements Game.Platform
                 });
             }
 
-            @Override
-            public void onInterstitialAdShowSucceeded() {
-                // ignored
-            }
 
-            @Override
-            public void onInterstitialAdShowFailed(IronSourceError ironSourceError) {
-                reportLogError(TAG, "onInterstitialAdShowFailed: " + ironSourceError);
-                onInterstitialAdClosed();      // TODO: not sure if this is needed
-            }
-
-            @Override
-            public void onInterstitialAdClicked() {
-                // ignored
-            }
         });
-        IronSource.setOfferwallListener(new InternalOfferwallListener() {
-            @Override
-            public void onOfferwallAvailable(boolean b, IronSourceError ironSourceError) {
-                // ignored
-            }
 
-            @Override
-            public void onOfferwallAvailable(boolean b) {
-                // ignored
-            }
-
-            @Override
-            public void onOfferwallOpened() {
-                // ignored
-            }
-
-            @Override
-            public void onOfferwallShowFailed(IronSourceError ironSourceError) {
-                reportLogError(TAG, "onOfferwallShowFailed: " + ironSourceError);
-                onOfferwallAdCredited(0, 0, true);      // TODO: not sure if this is needed
-            }
-
-            @Override
-            public boolean onOfferwallAdCredited(int credits, int totalCredits, boolean totalCreditsFlag) {
-                if(totalCreditsFlag)
-                    credits = 0;            // ignore credits as it can't be determined if these are from a previous installation
-                final int creditsFinal = credits;
-
-                Globals.grid.postMessage(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (Globals.grid.flapeeBirdApp != null) {
-                            if (creditsFinal > 0) {
-                                Globals.grid.flapeeBirdApp.queueReward(creditsFinal);
-                                Globals.grid.flapeeBirdApp.showRewardMenu();
-                            }
-                            else
-                                Globals.grid.flapeeBirdApp.showMenu(true);
-                        }
-                    }
-                });
-
-                // Absorb any
-                return true;
-            }
-
-            @Override
-            public void onGetOfferwallCreditsFailed(IronSourceError ironSourceError) {
-                reportLogError(TAG, "onGetOfferwallCreditsFailed: " + ironSourceError);
-                onOfferwallAdCredited(0, 0, true);      // TODO: not sure if this is needed
-            }
-
-            @Override
-            public void onOfferwallClosed() {
-                // Process offerwall credits
-                IronSource.getOfferwallCredits();
-            }
-        });
+//        IronSource.setOfferwallListener(new InternalOfferwallListener() {
+//            @Override
+//            public void onOfferwallAvailable(boolean b, IronSourceError ironSourceError) {
+//                // ignored
+//            }
+//
+//            @Override
+//            public void onOfferwallAvailable(boolean b) {
+//                // ignored
+//            }
+//
+//            @Override
+//            public void onOfferwallOpened() {
+//                // ignored
+//            }
+//
+//            @Override
+//            public void onOfferwallShowFailed(IronSourceError ironSourceError) {
+//                reportLogError(TAG, "onOfferwallShowFailed: " + ironSourceError);
+//                onOfferwallAdCredited(0, 0, true);      // TODO: not sure if this is needed
+//            }
+//
+//            @Override
+//            public boolean onOfferwallAdCredited(int credits, int totalCredits, boolean totalCreditsFlag) {
+//                if(totalCreditsFlag)
+//                    credits = 0;            // ignore credits as it can't be determined if these are from a previous installation
+//                final int creditsFinal = credits;
+//
+//                Globals.grid.postMessage(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        if (Globals.grid.flapeeBirdApp != null) {
+//                            if (creditsFinal > 0) {
+//                                Globals.grid.flapeeBirdApp.queueReward(creditsFinal);
+//                                Globals.grid.flapeeBirdApp.showRewardMenu();
+//                            }
+//                            else
+//                                Globals.grid.flapeeBirdApp.showMenu(true);
+//                        }
+//                    }
+//                });
+//
+//                // Absorb any
+//                return true;
+//            }
+//
+//            @Override
+//            public void onGetOfferwallCreditsFailed(IronSourceError ironSourceError) {
+//                reportLogError(TAG, "onGetOfferwallCreditsFailed: " + ironSourceError);
+//                onOfferwallAdCredited(0, 0, true);      // TODO: not sure if this is needed
+//            }
+//
+//            @Override
+//            public void onOfferwallClosed() {
+//                // Process offerwall credits
+//                IronSource.getOfferwallCredits();
+//            }
+//        });
 
         // Initialize
-        IronSource.init(this, "7ca3255d", IronSource.AD_UNIT.REWARDED_VIDEO, IronSource.AD_UNIT.OFFERWALL, IronSource.AD_UNIT.INTERSTITIAL);
+        IronSource.init(this, "7ca3255d", IronSource.AD_UNIT.REWARDED_VIDEO, IronSource.AD_UNIT.INTERSTITIAL);
         IronSource.loadInterstitial();
     }
 
@@ -794,11 +797,11 @@ public class AndroidLauncher extends AndroidApplication implements Game.Platform
             IronSource.showRewardedVideo();
             return true;
         }
-        else if(IronSource.isOfferwallAvailable()) {
-            reportLog(TAG, "Showing Offerwall Ads");
-            IronSource.showOfferwall();
-            return true;
-        }
+//        else if(IronSource.isOfferwallAvailable()) {
+//            reportLog(TAG, "Showing Offerwall Ads");
+//            IronSource.showOfferwall();
+//            return true;
+//        }
         else
             return false;
     }

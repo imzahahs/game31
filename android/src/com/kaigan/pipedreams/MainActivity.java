@@ -480,7 +480,7 @@ public class MainActivity extends Activity {
                 }
                 // Else verification passed
                 preferences.edit()
-                        .putInt(VERIFY_VERSIONCODE_KEY, BuildConfig.VERSION_CODE)
+                        .putLong(VERIFY_VERSIONCODE_KEY, BuildConfig.VERSION_CODE)
                         .putLong(VERIFY_FILESIZE_KEY, fileSize)
                         .apply();       // Remember to skip crc checking next time
                 startGame();
