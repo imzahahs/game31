@@ -111,22 +111,22 @@
 
 
 # IronSource
--keepclassmembers class com.ironsource.sdk.controller.IronSourceWebView$JSInterface {
-    public *;
-}
+#-keepclassmembers class com.ironsource.sdk.controller.IronSourceWebView$JSInterface {
+#    public *;
+#}
 -keepclassmembers class * implements android.os.Parcelable {
     public static final android.os.Parcelable$Creator *;
 }
--keep public class com.google.android.gms.ads.** {
-   public *;
-}
--keep class com.ironsource.adapters.** { *;
-}
+#-keep public class com.google.android.gms.ads.** {
+#   public *;
+#}
+#-keep class com.ironsource.adapters.** { *;
+#}
 -dontwarn com.moat.**
 -keep class com.moat.** { public protected private *; }
 
 # Tapjoy
--keep class com.tapjoy.** { *; }
+#-keep class com.tapjoy.** { *; }
 -keep class com.moat.** { *; }
 -keepattributes JavascriptInterface
 -keepattributes *Annotation*
@@ -143,8 +143,8 @@ public static final *** NULL;
 -keepnames class * implements android.os.Parcelable {
 public static final ** CREATOR;
 }
--keep class com.google.android.gms.ads.identifier.** { *; }
--dontwarn com.tapjoy.**
+#-keep class com.google.android.gms.ads.identifier.** { *; }
+#-dontwarn com.tapjoy.**
 
 # UnityAds
 # Keep JavascriptInterface for WebView bridge
@@ -156,9 +156,9 @@ public static final ** CREATOR;
 }
 
 # Keep all classes in Unity Ads package
--keep class com.unity3d.ads.** {
-   *;
-}
--dontwarn com.unity3d.**
+#-keep class com.unity3d.ads.** {
+#   *;
+#}
+#-dontwarn com.unity3d.**
 
--keep class com.android.vending.billing.**
+#-keep class com.android.vending.billing.**

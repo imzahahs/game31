@@ -1,7 +1,4 @@
-
-
 buildscript {
-    
 
     repositories {
         google()
@@ -12,13 +9,14 @@ buildscript {
             url 'https://maven.google.com/'
             name 'Google'
         }
-        maven {url 'https://android-sdk.is.com/'}
+        maven { url 'https://android-sdk.is.com/' }
 
-        maven {url 'https://cboost.jfrog.io/artifactory/chartboost-ads/' }
+//        maven { url 'https://cboost.jfrog.io/artifactory/chartboost-ads/' }
 
 //        maven { url 'https://maven.fabric.io/public' }
     }
     dependencies {
+        //noinspection AndroidGradlePluginVersion
         classpath 'com.android.tools.build:gradle:8.2.0'
         classpath 'com.guardsquare:proguard-gradle:7.1.0'  // The ProGuard Gradle plugin.
 //        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.3.0'
@@ -51,10 +49,10 @@ allprojects {
             url 'https://maven.google.com/'
             name 'Google'
         }
-        maven {
-            name "Tapjoy's maven repo"
-            url "https://sdk.tapjoy.com/"
-        }
+//        maven {
+//            name "Tapjoy's maven repo"
+//            url "https://sdk.tapjoy.com/"
+//        }
         maven { url "https://jitpack.io" }
     }
 }
@@ -86,16 +84,15 @@ project(":android") {
     repositories {
 //        maven { url 'https://maven.fabric.io/public' }
 
-        maven {
-            url "https://dl.bintray.com/ironsource-mobile/android-sdk"
-        }
-        maven {
-            url 'https://dl.bintray.com/ironsource-mobile/android-adapters'
-        }
-        //maven { url 'https://android-sdk.is.com/' }
-        maven {url 'https://android-sdk.is.com/'}
+//        maven {
+//            url "https://dl.bintray.com/ironsource-mobile/android-sdk"
+//        }
+//        maven {
+//            url 'https://dl.bintray.com/ironsource-mobile/android-adapters'
+//        }
+        maven { url 'https://android-sdk.is.com/' }
 
-        maven {url 'https://cboost.jfrog.io/artifactory/chartboost-ads/' }
+//        maven { url 'https://cboost.jfrog.io/artifactory/chartboost-ads/' }
 
 
         maven { url "https://jcenter.bintray.com" }
@@ -117,50 +114,54 @@ project(":android") {
         natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-x86_64"
 
         // Crashlytics & Answers
-        implementation('com.crashlytics.sdk.android:crashlytics:2.10.1@aar') {
-            transitive = true
-        }
-        implementation('com.crashlytics.sdk.android:answers:1.4.7@aar') {
-            transitive = true
-        }
+//        implementation('com.crashlytics.sdk.android:crashlytics:2.10.1@aar') {
+//            transitive = true
+//        }
+//        implementation('com.crashlytics.sdk.android:answers:1.4.7@aar') {
+//            transitive = true
+//        }
 
         // Permissions handler
-        implementation 'com.karumi:dexter:4.2.0'
+        implementation 'com.karumi:dexter:6.2.3'
 
         // Alert dialog
-        implementation 'cn.pedant.sweetalert:library:1.3'
+//        implementation 'cn.pedant.sweetalert:library:1.3'
+        implementation 'com.github.f0ris.sweetalert:library:1.6.2'
 
         // APK expansion
-        implementation 'com.github.bolein.better-apk-expansion:downloader_library:5.0.3'
+//        implementation 'com.github.bolein.better-apk-expansion:downloader_library:5.0.3'
 
         // Google Play Game Services
-        implementation 'com.google.android.gms:play-services-games:23.2.0'
-        implementation 'com.google.android.gms:play-services-auth:21.2.0'
-        implementation 'com.google.android.gms:play-services-ads:23.1.0'
-
-        // IronSource ads
-        implementation 'com.ironsource.sdk:mediationsdk:8.1.0'
-        // Add AdMob Network
-        implementation 'com.ironsource.adapters:admobadapter:4.3.43'
-        // Add Chartboost Network
-        implementation 'com.ironsource.adapters:chartboostadapter:4.3.16'
-        implementation 'com.chartboost:chartboost-sdk:9.7.0'
-
-        // Add UnityAds Network
-        implementation 'com.ironsource.adapters:unityadsadapter:4.3.40'
-        implementation 'com.unity3d.ads:unity-ads:4.12.0'
-        // Add Tapjoy Network
-//        implementation 'com.ironsource.adapters:tapjoyadapter:4.1.30.0'
-//        implementation 'com.tapjoy:tapjoy-android-sdk:13.2.1'
-
-        // Multidex support
-        implementation 'com.android.support:multidex:1.0.3'
-
-        // v4 support required by ironsource
-        // implementation 'com.android.support:support-compat:28.0.0'
+        implementation 'com.google.code.gson:gson:2.10'
+        implementation 'com.opencsv:opencsv:3.7'
+        implementation "com.google.android.gms:play-services-games-v2:20.1.0"
+        implementation "com.google.android.play:review:2.0.1"
+        implementation 'com.google.android.play:asset-delivery:2.2.2'
+//        implementation 'com.google.android.gms:play-services-ads:23.1.0'
+//
+//        // IronSource ads
+//        implementation 'com.ironsource.sdk:mediationsdk:8.1.0'
+//        // Add AdMob Network
+//        implementation 'com.ironsource.adapters:admobadapter:4.3.43'
+//        // Add Chartboost Network
+//        implementation 'com.ironsource.adapters:chartboostadapter:4.3.16'
+//        implementation 'com.chartboost:chartboost-sdk:9.7.0'
+//
+//        // Add UnityAds Network
+//        implementation 'com.ironsource.adapters:unityadsadapter:4.3.40'
+//        implementation 'com.unity3d.ads:unity-ads:4.12.0'
+//        // Add Tapjoy Network
+////        implementation 'com.ironsource.adapters:tapjoyadapter:4.1.30.0'
+////        implementation 'com.tapjoy:tapjoy-android-sdk:13.2.1'
+//
+//        // Multidex support
+            implementation 'com.android.support:multidex:1.0.3'
+//
+//        // v4 support required by ironsource
+//        // implementation 'com.android.support:support-compat:28.0.0'
 
         // Billing
-        implementation 'com.anjlab.android.iab.v3:library:1.0.44'
+        //implementation 'com.anjlab.android.iab.v3:library:1.0.44'
     }
 }
 

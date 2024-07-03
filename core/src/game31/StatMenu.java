@@ -480,16 +480,18 @@ public class StatMenu extends Menu<Grid> implements OnClick<Grid> {
         if(view == s.socialTwitterButton) {
             // Analytics
             Game.analyticsString(Globals.ANALYTICS_EVENT_SHARED, Globals.ANALYTICS_EVENT_SHARED_FIELD, Globals.ANALYTICS_EVENT_SHARED_TWITTER);
+            Game.game.platform.openURI(Globals.helpTwitterURL);
 
-            Gdx.net.openURI(Globals.helpTwitterURL);
+//            Gdx.net.openURI(Globals.helpTwitterURL);
             return;
         }
 
         if(view == s.socialFbButton) {
             // Analytics
             Game.analyticsString(Globals.ANALYTICS_EVENT_SHARED, Globals.ANALYTICS_EVENT_SHARED_FIELD, Globals.ANALYTICS_EVENT_SHARED_FB);
+            Game.game.platform.openURI(Globals.helpFacebookURL);
 
-            Gdx.net.openURI(Globals.helpFacebookURL);
+//            Gdx.net.openURI(Globals.helpFacebookURL);
             return;
         }
 

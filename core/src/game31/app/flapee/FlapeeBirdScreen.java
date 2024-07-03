@@ -2899,7 +2899,8 @@ public class FlapeeBirdScreen extends Menu<Grid> implements OnClick<Grid>, OnPre
                 // Close menu and wait for ad network to show reward menu
                 s.menuGroup.detachWithAnim();
                 s.moreEggsGroup.detachWithAnim();
-                // showRewardMenu();
+                //For fake?
+                showRewardMenu();
             }
 
             // Remember to remove sticker

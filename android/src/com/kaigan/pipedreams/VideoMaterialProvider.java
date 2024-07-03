@@ -314,8 +314,11 @@ public class VideoMaterialProvider implements VideoMaterial.PlatformProvider {
 
         private void releaseDecoder() {
             try {
-                decoder.stop();
-                decoder.release();
+                if(decoder != null)
+                {
+                    decoder.stop();
+                    decoder.release();
+                }
             } catch (Throwable e) {
                 Sys.error(TAG, "Failed to dispose MediaCodec for: " + filename, e);
             }

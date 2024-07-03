@@ -1,0 +1,13 @@
+plugins {
+    id 'com.android.asset-pack'
+}
+
+assetPack {
+    packName = "asset_pack_videoFiles"
+    dynamicDelivery {
+        deliveryType = "install-time"// | fast-follow | on-demand ]"
+//        deliveryType = "[ install-time ]"// | fast-follow | on-demand ]"
+        //This one might be good if we specify, we defo want install-time, its the easiest. So dont include fast-follow and on-demand
+        //since we use install time, asset packs are immediately available at app launch. Use the Java AssetManager API to access assets served in this mode
+    }
+}

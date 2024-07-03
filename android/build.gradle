@@ -4,7 +4,8 @@ android {
         config {
             keyAlias 'kaigan'
             keyPassword 'projectISO@03'
-            storeFile file('C:/Users/lorde/Downloads/kaigan_managed.keystore')
+//            storeFile file('C:/Users/lorde/Downloads/kaigan_managed.keystore')
+            storeFile file('C:/Users/lorde/Downloads/kaigan_managed_simulacra1.jks')
             storePassword 'projectISO@03'
             v1SigningEnabled true
             v2SigningEnabled true
@@ -26,33 +27,50 @@ android {
         androidTest.setRoot('tests')
     }
     packagingOptions {
-        exclude 'META-INF/robovm/ios/robovm.xml'
+        resources {
+            excludes += ['META-INF/robovm/ios/robovm.xml']
+        }
     }
     defaultConfig {
         applicationId "com.kaigan.pipedreams"
         minSdkVersion 23
         compileSdk 34
         targetSdkVersion 34
-        versionCode 45
-        versionName "1.0.45"
+        versionCode 48
+        versionName "1.0.48"
         signingConfig signingConfigs.config
         multiDexEnabled true
+
+        ndk {
+            // Specifies the ABI configurations of your native
+            // libraries Gradle should build and package with your app.
+            abiFilters 'x86', 'x86_64', 'armeabi-v7a', 'arm64-v8a'
+        }
     }
 //    dexOptions {
 //        javaMaxHeapSize "4g"
 //    }
 
+    splits {
+        abi {
+            enable true
+            reset()
+            include  'x86', 'x86_64', 'armeabi-v7a', 'arm64-v8a'
+            universalApk true
+        }
+    }
+
     buildTypes {
         release {
             buildConfigField("long", "VERSION_CODE", "${defaultConfig.versionCode}")
-            buildConfigField("String","VERSION_NAME","\"${defaultConfig.versionName}\"")
-            minifyEnabled true
+            buildConfigField("String", "VERSION_NAME", "\"${defaultConfig.versionName}\"")
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
             buildConfigField("long", "VERSION_CODE", "${defaultConfig.versionCode}")
-            buildConfigField("String","VERSION_NAME","\"${defaultConfig.versionName}\"")
-            minifyEnabled true
+            buildConfigField("String", "VERSION_NAME", "\"${defaultConfig.versionName}\"")
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -61,13 +79,21 @@ android {
         renderScript true
         aidl true
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    buildToolsVersion '34.0.0'
+
+    assetPacks = [":asset_pack_videoFiles"]
+
 }
 
 
 // called every time gradle gets executed, takes the native dependencies of
 // the natives configuration, and extracts them to the proper libs/ folders
 // so they get packed with the APK.
-task copyAndroidNatives() { 
+task copyAndroidNatives() {
 //    file("libs/armeabi/").mkdirs()
     file("libs/armeabi-v7a/").mkdirs()
     file("libs/arm64-v8a/").mkdirs()
@@ -76,12 +102,12 @@ task copyAndroidNatives() {
 
     configurations.natives.files.each { jar ->
         def outputDir = null
-        if(jar.name.endsWith("natives-arm64-v8a.jar")) outputDir = file("libs/arm64-v8a")
-        if(jar.name.endsWith("natives-armeabi-v7a.jar")) outputDir = file("libs/armeabi-v7a")        
+        if (jar.name.endsWith("natives-arm64-v8a.jar")) outputDir = file("libs/arm64-v8a")
+        if (jar.name.endsWith("natives-armeabi-v7a.jar")) outputDir = file("libs/armeabi-v7a")
 //        if(jar.name.endsWith("natives-armeabi.jar")) outputDir = file("libs/armeabi")
-        if(jar.name.endsWith("natives-x86_64.jar")) outputDir = file("libs/x86_64")
-        if(jar.name.endsWith("natives-x86.jar")) outputDir = file("libs/x86")
-        if(outputDir != null) {
+        if (jar.name.endsWith("natives-x86_64.jar")) outputDir = file("libs/x86_64")
+        if (jar.name.endsWith("natives-x86.jar")) outputDir = file("libs/x86")
+        if (outputDir != null) {
             copy {
                 from zipTree(jar)
                 into outputDir
@@ -92,14 +118,12 @@ task copyAndroidNatives() {
 }
 
 
-
 task run(type: Exec) {
     def path
     def localProperties = project.file("../local.properties")
     if (localProperties.exists()) {
         Properties properties = new Properties()
-        localProperties.withInputStream { instr ->
-            properties.load(instr)
+        localProperties.withInputStream { instr -> properties.load(instr)
         }
         def sdkDir = properties.getProperty('sdk.dir')
         if (sdkDir) {
@@ -152,7 +176,7 @@ configurations {
 idea {
     module {
         sourceDirs += file("src")
-        scopes = [ COMPILE: [plus:[project.configurations.resolvableImplementation]]]
+        scopes = [COMPILE: [plus: [project.configurations.resolvableImplementation]]]
 
         iml {
             withXml {
@@ -162,7 +186,7 @@ idea {
                 builder.component(name: "FacetManager") {
                     facet(type: "android", name: "Android") {
                         configuration {
-                            option(name: "UPDATE_PROPERTY_FILES", value:"true")
+                            option(name: "UPDATE_PROPERTY_FILES", value: "true")
                         }
                     }
                 }
@@ -172,6 +196,10 @@ idea {
 }
 
 dependencies {
+    implementation project(':core')
+    implementation project(':core')
+    implementation project(':core')
+    implementation project(':core')
     implementation project(':core')
     implementation project(':core')
     implementation project(':core')

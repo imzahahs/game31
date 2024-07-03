@@ -1,7 +1,10 @@
 package com.kaigan.pipedreams;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.credentials.CredentialManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,29 +16,27 @@ import android.view.DisplayCutout;
 import android.view.View;
 import android.view.WindowManager;
 
-import com.anjlab.android.iab.v3.BillingProcessor;
-import com.anjlab.android.iab.v3.TransactionDetails;
+//import com.anjlab.android.iab.v3.BillingProcessor;
+//import com.anjlab.android.iab.v3.TransactionDetails;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.badlogic.gdx.backends.android.AndroidGraphics;
 import com.badlogic.gdx.backends.android.AndroidZipFileHandle;
 import com.badlogic.gdx.files.FileHandle;
-import com.crashlytics.android.Crashlytics;
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.ContentViewEvent;
-import com.crashlytics.android.answers.CustomEvent;
-import com.crashlytics.android.answers.LevelEndEvent;
-import com.crashlytics.android.answers.LevelStartEvent;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
+//import com.crashlytics.android.Crashlytics;
+//import com.crashlytics.android.answers.Answers;
+//import com.crashlytics.android.answers.ContentViewEvent;
+//import com.crashlytics.android.answers.CustomEvent;
+//import com.crashlytics.android.answers.LevelEndEvent;
+//import com.crashlytics.android.answers.LevelStartEvent;
+//import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+//import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.drive.Drive;
-import com.google.android.gms.games.AchievementsClient;
-import com.google.android.gms.games.Games;
-import com.google.android.gms.games.SnapshotsClient;
+import com.google.android.gms.games.*;
 import com.google.android.gms.games.snapshot.Snapshot;
 import com.google.android.gms.games.snapshot.SnapshotMetadata;
 import com.google.android.gms.games.snapshot.SnapshotMetadataChange;
@@ -44,12 +45,12 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.ironsource.mediationsdk.IronSource;
-import com.ironsource.mediationsdk.adunit.adapter.utility.AdInfo;
-import com.ironsource.mediationsdk.logger.IronSourceError;
-import com.ironsource.mediationsdk.model.Placement;
-import com.ironsource.mediationsdk.sdk.LevelPlayInterstitialListener;
-import com.ironsource.mediationsdk.sdk.LevelPlayRewardedVideoListener;
+//import com.ironsource.mediationsdk.IronSource;
+//import com.ironsource.mediationsdk.adunit.adapter.utility.AdInfo;
+//import com.ironsource.mediationsdk.logger.IronSourceError;
+//import com.ironsource.mediationsdk.model.Placement;
+//import com.ironsource.mediationsdk.sdk.LevelPlayInterstitialListener;
+//import com.ironsource.mediationsdk.sdk.LevelPlayRewardedVideoListener;
 
 import java.io.IOException;
 
@@ -57,14 +58,14 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 import game31.Game;
 import game31.Globals;
 import game31.VoiceProfile;
-import io.fabric.sdk.android.Fabric;
+//import io.fabric.sdk.android.Fabric;
 import sengine.Sys;
 import sengine.audio.Audio;
 import sengine.graphics2d.Fonts;
 import sengine.graphics2d.texturefile.TextureLoader;
 import sengine.mass.MassFile;
 
-public class AndroidLauncher extends AndroidApplication implements Game.PlatformInterface, BillingProcessor.IBillingHandler {
+public class AndroidLauncher extends AndroidApplication implements Game.PlatformInterface {//}, BillingProcessor.IBillingHandler {
 	private static final String TAG = "AndroidLauncher";
 
 	private static String resolveAchievementID(Globals.Achievement achievement) {
@@ -132,8 +133,8 @@ public class AndroidLauncher extends AndroidApplication implements Game.Platform
 		}
 	}
 
-	static final int GAME_DATA_VERSION = 44;
-	static final long GAME_DATA_CRC = 0x2e026681L; // 0x3b42264L; // version 44
+//	static final int GAME_DATA_VERSION = 45;
+//	static final long GAME_DATA_CRC = 0x2e026681L; // 0x3b42264L; // version 44
 
 	public static int hdpiHeightThreshold = 1500;
 
@@ -144,11 +145,11 @@ public class AndroidLauncher extends AndroidApplication implements Game.Platform
     private static final String GOOGLE_IAP_REMOVE_ADS = "remove_ads";
 
     // Google game center
-	private GoogleSignInClient mGoogleSignInClient;
+//	private GoogleSignInClient mGoogleSignInClient;
 	private SnapshotsClient mSnapshotsClient;
 	private AchievementsClient mAchievementsClient;
     // The currently signed in account, used to check the account has changed outside of this activity when resuming.
-    private GoogleSignInAccount mSignedInAccount = null;
+//    private GoogleSignInAccount mSignedInAccount = null;
 
 	private long saveGameTime = 0;
 	private long saveGameTimeStarted = 0;
@@ -156,31 +157,34 @@ public class AndroidLauncher extends AndroidApplication implements Game.Platform
 	private SweetAlertDialog updateRequiredDialog = null;
 
 	// Billing
-    private BillingProcessor billingProcessor;
-    private boolean hasRemovedAds = false;
+//    private BillingProcessor billingProcessor;
+    private static final boolean hasRemovedAds = false;
 
 
-    private void startSignInIntent() {
-        startActivityForResult(mGoogleSignInClient.getSignInIntent(), RC_SIGN_IN);
-    }
+//    private void startSignInIntent() {
+////        startActivityForResult(mGoogleSignInClient.getSignInIntent(), RC_SIGN_IN);
+//
+//
+//
+//    }
 
-    private void signInSilently() {
-        mGoogleSignInClient.silentSignIn().addOnCompleteListener(this,
-                new OnCompleteListener<GoogleSignInAccount>() {
-                    @Override
-                    public void onComplete(@NonNull Task<GoogleSignInAccount> task) {
-                        if (task.isSuccessful())
-                            onConnected(task.getResult());
-                        else
-                            onDisconnected();
-                    }
-                });
-    }
+//    private void signInSilently() {
+//        mGoogleSignInClient.silentSignIn().addOnCompleteListener(this,
+//                new OnCompleteListener<GoogleSignInAccount>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<GoogleSignInAccount> task) {
+//                        if (task.isSuccessful())
+//                            onConnected(task.getResult());
+//                        else
+//                            onDisconnected();
+//                    }
+//                });
+//    }
 
-    private void onConnected(GoogleSignInAccount googleSignInAccount) {
-        mSignedInAccount = googleSignInAccount;
-        mSnapshotsClient = Games.getSnapshotsClient(this, googleSignInAccount);
-        mAchievementsClient = Games.getAchievementsClient(this, googleSignInAccount);
+    private void onConnected() {
+//        mSignedInAccount = googleSignInAccount;
+        mSnapshotsClient = PlayGames.getSnapshotsClient(this);
+        mAchievementsClient = PlayGames.getAchievementsClient(this);
         reportLog(TAG, "Google login done, opening save game");
         final FileHandle saveFile = Gdx.files.local(Globals.SAVE_FILENAME);
         mSnapshotsClient.open(Globals.SAVE_FILENAME, true, SnapshotsClient.RESOLUTION_POLICY_MOST_RECENTLY_MODIFIED)
@@ -199,6 +203,7 @@ public class AndroidLauncher extends AndroidApplication implements Game.Platform
                         // Opening the snapshot was a success and any conflicts have been resolved.
                         try {
                             // Extract the raw data from the snapshot.
+                            assert snapshot != null;
                             return snapshot.getSnapshotContents().readFully();
                         } catch (IOException e) {
                             reportLogError(TAG, "Error reading snapshot: " + Globals.SAVE_FILENAME, e);
@@ -224,217 +229,240 @@ public class AndroidLauncher extends AndroidApplication implements Game.Platform
 
     private void onDisconnected() {
         mSnapshotsClient = null;
-        mSignedInAccount = null;
+//        mSignedInAccount = null;
         mAchievementsClient = null;
         informLoginDone(false);      // Login failed
     }
 
     private boolean isSignedIn() {
-        return mSnapshotsClient != null;
+        return !shouldPromptGameCenterLogin;
+        //return mSnapshotsClient != null;
     }
 
 
-    private void initializeAds() {
-        // Prepare callbacks
-        IronSource.setLevelPlayRewardedVideoListener(new LevelPlayRewardedVideoListener() {
-            @Override
-            public void onAdOpened(AdInfo adInfo) {
-
-            }
-
-
-            @Override
-            public void onAdClicked(Placement placement, AdInfo adInfo) {
-
-            }
-
-            @Override
-            public void onAdAvailable(AdInfo adInfo) {
-
-            }
-
-            @Override
-            public void onAdUnavailable() {
-
-            }
-
-
-            @Override
-            public void onAdClosed(AdInfo adInfo) {
-                // Show reward
-                Globals.grid.postMessage(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (Globals.grid.flapeeBirdApp != null) {
-                            if (Globals.grid.flapeeBirdApp.queuedReward() > 0)
-                                Globals.grid.flapeeBirdApp.showRewardMenu();
-                            else {
-                                Sys.error(TAG, "No reward found, showing fake ad");
-                                Globals.grid.flapeeBirdApp.adScreen.show(false);
-                                Globals.grid.flapeeBirdApp.adScreen.open(false);
-                                Globals.grid.flapeeBirdApp.queueReward(30);
-                            }
-                        }
-                    }
-                });
-            }
-
-
-
-            @Override
-            public void onAdRewarded(Placement placement, AdInfo adInfo) {
-                try {
-                    final int credits = placement.getRewardAmount();
-                    reportLog(TAG, "Received rewarded video credits: " + credits);
-                    if(credits > 0) {
-                        Globals.grid.postMessage(new Runnable() {
-                            @Override
-                            public void run() {
-                                Globals.grid.flapeeBirdApp.queueReward(credits);
-                            }
-                        });
-                    }
-                } catch (Throwable e) {
-                    reportLogError(TAG, "Failed to process rewarded video credits", e);
-                }
-            }
-
-            @Override
-            public void onAdShowFailed(IronSourceError ironSourceError, AdInfo adInfo) {
-                reportLogError(TAG, "onRewardedVideoAdShowFailed" + ironSourceError);
-                onAdClosed(adInfo);      // TODO: not sure if this is needed
-            }
-
-
-        });
-        IronSource.setLevelPlayInterstitialListener(new LevelPlayInterstitialListener() {
-            @Override
-            public void onAdReady(AdInfo adInfo) {
-
-            }
-
-            @Override
-            public void onAdLoadFailed(IronSourceError ironSourceError) {
-                reportLogError(TAG, "onInterstitialAdLoadFailed: " + ironSourceError);
-            }
-
-            @Override
-            public void onAdOpened(AdInfo adInfo) {
-
-            }
-
-            @Override
-            public void onAdShowSucceeded(AdInfo adInfo) {
-
-            }
-
-            @Override
-            public void onAdShowFailed(IronSourceError ironSourceError, AdInfo adInfo) {
-                reportLogError(TAG, "onInterstitialAdLoadFailed: " + ironSourceError);
-            }
-
-            @Override
-            public void onAdClicked(AdInfo adInfo) {
-
-            }
-
-            @Override
-            public void onAdClosed(AdInfo adInfo) {
-            // Load another
-                IronSource.loadInterstitial();
-
-                // Show menu
-                Globals.grid.postMessage(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (Globals.grid.flapeeBirdApp != null)
-                            Globals.grid.flapeeBirdApp.showMenu(true);
-                    }
-                });
-            }
-
-
-        });
-
-//        IronSource.setOfferwallListener(new InternalOfferwallListener() {
+//    private void initializeAds() {
+//        // Prepare callbacks
+//        IronSource.setLevelPlayRewardedVideoListener(new LevelPlayRewardedVideoListener() {
 //            @Override
-//            public void onOfferwallAvailable(boolean b, IronSourceError ironSourceError) {
-//                // ignored
+//            public void onAdOpened(AdInfo adInfo) {
+//
+//            }
+//
+//
+//            @Override
+//            public void onAdClicked(Placement placement, AdInfo adInfo) {
+//
 //            }
 //
 //            @Override
-//            public void onOfferwallAvailable(boolean b) {
-//                // ignored
+//            public void onAdAvailable(AdInfo adInfo) {
+//
 //            }
 //
 //            @Override
-//            public void onOfferwallOpened() {
-//                // ignored
+//            public void onAdUnavailable() {
+//
 //            }
 //
-//            @Override
-//            public void onOfferwallShowFailed(IronSourceError ironSourceError) {
-//                reportLogError(TAG, "onOfferwallShowFailed: " + ironSourceError);
-//                onOfferwallAdCredited(0, 0, true);      // TODO: not sure if this is needed
-//            }
 //
 //            @Override
-//            public boolean onOfferwallAdCredited(int credits, int totalCredits, boolean totalCreditsFlag) {
-//                if(totalCreditsFlag)
-//                    credits = 0;            // ignore credits as it can't be determined if these are from a previous installation
-//                final int creditsFinal = credits;
-//
+//            public void onAdClosed(AdInfo adInfo) {
+//                // Show reward
 //                Globals.grid.postMessage(new Runnable() {
 //                    @Override
 //                    public void run() {
 //                        if (Globals.grid.flapeeBirdApp != null) {
-//                            if (creditsFinal > 0) {
-//                                Globals.grid.flapeeBirdApp.queueReward(creditsFinal);
+//                            if (Globals.grid.flapeeBirdApp.queuedReward() > 0)
 //                                Globals.grid.flapeeBirdApp.showRewardMenu();
+//                            else {
+//                                Sys.error(TAG, "No reward found, showing fake ad");
+//                                Globals.grid.flapeeBirdApp.adScreen.show(false);
+//                                Globals.grid.flapeeBirdApp.adScreen.open(false);
+//                                Globals.grid.flapeeBirdApp.queueReward(30);
 //                            }
-//                            else
-//                                Globals.grid.flapeeBirdApp.showMenu(true);
 //                        }
 //                    }
 //                });
+//            }
 //
-//                // Absorb any
-//                return true;
+//
+//
+//            @Override
+//            public void onAdRewarded(Placement placement, AdInfo adInfo) {
+//                try {
+//                    final int credits = placement.getRewardAmount();
+//                    reportLog(TAG, "Received rewarded video credits: " + credits);
+//                    if(credits > 0) {
+//                        Globals.grid.postMessage(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                Globals.grid.flapeeBirdApp.queueReward(credits);
+//                            }
+//                        });
+//                    }
+//                } catch (Throwable e) {
+//                    reportLogError(TAG, "Failed to process rewarded video credits", e);
+//                }
 //            }
 //
 //            @Override
-//            public void onGetOfferwallCreditsFailed(IronSourceError ironSourceError) {
-//                reportLogError(TAG, "onGetOfferwallCreditsFailed: " + ironSourceError);
-//                onOfferwallAdCredited(0, 0, true);      // TODO: not sure if this is needed
+//            public void onAdShowFailed(IronSourceError ironSourceError, AdInfo adInfo) {
+//                reportLogError(TAG, "onRewardedVideoAdShowFailed" + ironSourceError);
+//                onAdClosed(adInfo);      // TODO: not sure if this is needed
 //            }
 //
-//            @Override
-//            public void onOfferwallClosed() {
-//                // Process offerwall credits
-//                IronSource.getOfferwallCredits();
-//            }
+//
 //        });
+//        IronSource.setLevelPlayInterstitialListener(new LevelPlayInterstitialListener() {
+//            @Override
+//            public void onAdReady(AdInfo adInfo) {
+//
+//            }
+//
+//            @Override
+//            public void onAdLoadFailed(IronSourceError ironSourceError) {
+//                reportLogError(TAG, "onInterstitialAdLoadFailed: " + ironSourceError);
+//            }
+//
+//            @Override
+//            public void onAdOpened(AdInfo adInfo) {
+//
+//            }
+//
+//            @Override
+//            public void onAdShowSucceeded(AdInfo adInfo) {
+//
+//            }
+//
+//            @Override
+//            public void onAdShowFailed(IronSourceError ironSourceError, AdInfo adInfo) {
+//                reportLogError(TAG, "onInterstitialAdLoadFailed: " + ironSourceError);
+//            }
+//
+//            @Override
+//            public void onAdClicked(AdInfo adInfo) {
+//
+//            }
+//
+//            @Override
+//            public void onAdClosed(AdInfo adInfo) {
+//            // Load another
+//                IronSource.loadInterstitial();
+//
+//                // Show menu
+//                Globals.grid.postMessage(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        if (Globals.grid.flapeeBirdApp != null)
+//                            Globals.grid.flapeeBirdApp.showMenu(true);
+//                    }
+//                });
+//            }
+//
+//
+//        });
+//
+////        IronSource.setOfferwallListener(new InternalOfferwallListener() {
+////            @Override
+////            public void onOfferwallAvailable(boolean b, IronSourceError ironSourceError) {
+////                // ignored
+////            }
+////
+////            @Override
+////            public void onOfferwallAvailable(boolean b) {
+////                // ignored
+////            }
+////
+////            @Override
+////            public void onOfferwallOpened() {
+////                // ignored
+////            }
+////
+////            @Override
+////            public void onOfferwallShowFailed(IronSourceError ironSourceError) {
+////                reportLogError(TAG, "onOfferwallShowFailed: " + ironSourceError);
+////                onOfferwallAdCredited(0, 0, true);      // TODO: not sure if this is needed
+////            }
+////
+////            @Override
+////            public boolean onOfferwallAdCredited(int credits, int totalCredits, boolean totalCreditsFlag) {
+////                if(totalCreditsFlag)
+////                    credits = 0;            // ignore credits as it can't be determined if these are from a previous installation
+////                final int creditsFinal = credits;
+////
+////                Globals.grid.postMessage(new Runnable() {
+////                    @Override
+////                    public void run() {
+////                        if (Globals.grid.flapeeBirdApp != null) {
+////                            if (creditsFinal > 0) {
+////                                Globals.grid.flapeeBirdApp.queueReward(creditsFinal);
+////                                Globals.grid.flapeeBirdApp.showRewardMenu();
+////                            }
+////                            else
+////                                Globals.grid.flapeeBirdApp.showMenu(true);
+////                        }
+////                    }
+////                });
+////
+////                // Absorb any
+////                return true;
+////            }
+////
+////            @Override
+////            public void onGetOfferwallCreditsFailed(IronSourceError ironSourceError) {
+////                reportLogError(TAG, "onGetOfferwallCreditsFailed: " + ironSourceError);
+////                onOfferwallAdCredited(0, 0, true);      // TODO: not sure if this is needed
+////            }
+////
+////            @Override
+////            public void onOfferwallClosed() {
+////                // Process offerwall credits
+////                IronSource.getOfferwallCredits();
+////            }
+////        });
+//
+//        // Initialize
+//        IronSource.init(this, "7ca3255d", IronSource.AD_UNIT.REWARDED_VIDEO, IronSource.AD_UNIT.INTERSTITIAL);
+//        IronSource.loadInterstitial();
+//    }
 
-        // Initialize
-        IronSource.init(this, "7ca3255d", IronSource.AD_UNIT.REWARDED_VIDEO, IronSource.AD_UNIT.INTERSTITIAL);
-        IronSource.loadInterstitial();
-    }
-
+    private GamesSignInClient gamesSignInClient = null;
+    private boolean shouldPromptGameCenterLogin = false;
     @Override
 	protected void onCreate (Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+        PlayGamesSdk.initialize(this);
 
-		Fabric.with(this, new Answers(), new Crashlytics());            // TODO: move to application
+//		Fabric.with(this, new Answers(), new Crashlytics());            // TODO: move to application
 
 		// Prepare sign in client
-		mGoogleSignInClient = GoogleSignIn.getClient(this,
-				new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
-					.requestScopes(Drive.SCOPE_APPFOLDER, Games.SCOPE_GAMES_LITE)		// For saved games
-					.build()
-		);
+//		mGoogleSignInClient = GoogleSignIn.getClient(this,
+//				new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
+//					.requestScopes(Drive.SCOPE_APPFOLDER, Games.SCOPE_GAMES_LITE)		// For saved games
+//					.build()
+//		);
+
+        gamesSignInClient = PlayGames.getGamesSignInClient(this);//It's supposed to be getActivity() but uhhh, im not sure. we'll see, if no further comments, it means it works.
+
+        gamesSignInClient.isAuthenticated().addOnCompleteListener(isAuthenticatedTask -> {
+            boolean isAuthenticated =
+                    (isAuthenticatedTask.isSuccessful() &&
+                            isAuthenticatedTask.getResult().isAuthenticated());
+
+            if (isAuthenticated) {
+                shouldPromptGameCenterLogin = false;
+                onConnected();
+                // Continue with Play Games Services
+            } else {
+                shouldPromptGameCenterLogin = true;
+                // Disable your integration with Play Games Services or show a
+                // login button to ask  players to sign-in. Clicking it should
+                // call GamesSignInClient.signIn().
+            }
+        });
 
 		// Ads
-		initializeAds();
+//		initializeAds();
 
 		// Initialize android
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
@@ -468,34 +496,34 @@ public class AndroidLauncher extends AndroidApplication implements Game.Platform
 		initialize(game.applicationListener, config);
 
 		// Link expansion files
-        files.setAPKExpansion(GAME_DATA_VERSION, -1);			// TODO Monitor the result
+//        files.setAPKExpansion(GAME_DATA_VERSION, -1);			// TODO Monitor the result
 
         // Compatibility fixes
         // This is necessary to check if the expansion file contains the file first, fix for motorola and older samsung devices
-        sengine.File.customFileSource = new sengine.File.CustomFileSource() {
-            @Override
-            public FileHandle open(String path) {
-                AndroidZipFileHandle zipFileHandle = new AndroidZipFileHandle(path);
-                if(zipFileHandle.isDirectory())
-                    return null;        // only intended for files
-                return zipFileHandle;
-            }
-        };
+//        sengine.File.customFileSource = new sengine.File.CustomFileSource() {
+//            @Override
+//            public FileHandle open(String path) {
+//                AndroidZipFileHandle zipFileHandle = new AndroidZipFileHandle(path);
+//                if(zipFileHandle.isDirectory())
+//                    return null;        // only intended for files
+//                return zipFileHandle;
+//            }
+//        };
 
         // Special cases
-        String device = android.os.Build.MODEL + " " + android.os.Build.MANUFACTURER + " " + android.os.Build.PRODUCT;
-        if(device.toLowerCase().contains("motorola")) {
-            // Synchronized IO... for crashing motorola devices
-            TextureLoader.synchronizedIO = true;
-            Audio.synchronizedIO = true;
-        }
+//        String device = android.os.Build.MODEL + " " + android.os.Build.MANUFACTURER + " " + android.os.Build.PRODUCT;
+//        if(device.toLowerCase().contains("motorola")) {
+//            // Synchronized IO... for crashing motorola devices
+//            TextureLoader.synchronizedIO = true;
+//            Audio.synchronizedIO = true;
+//        }
 
 		// Screen dimming
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         // Billing Processor
-        billingProcessor = new BillingProcessor(this, "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqNvd1mGwyfLNYrtP0CDxoRoH+tc7/UbmvjSA506U+x7FIB/Y2RxouvWF4hQeSJJwLhVYGFfHm1znPYYD0xv9BcT3pDOYa3URigFSmlsevKZ9EJTOfv0/Vie+Ihh0aKwzMr+o1nkSa1+9Jp695iQiXW+cdfhSs1DVJzBM81yXgUxIkRaez/orlOSIbOXgoB1/AkGS/Oks/YttD4FhMjty//h+8YFUw1BKpBh36ytvtTgbfh1tqD/pFxO/F+xS5UKWppSCjYQHsrJdGjzhnPrylL7kOH3Y85AeeeTVzWfKrQbLoX+8c1Cc+TpTd5kFw9lKvViEfQipWC7WzSiG8pgKEwIDAQAB", this);
-        billingProcessor.initialize();
+//        billingProcessor = new BillingProcessor(this, "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqNvd1mGwyfLNYrtP0CDxoRoH+tc7/UbmvjSA506U+x7FIB/Y2RxouvWF4hQeSJJwLhVYGFfHm1znPYYD0xv9BcT3pDOYa3URigFSmlsevKZ9EJTOfv0/Vie+Ihh0aKwzMr+o1nkSa1+9Jp695iQiXW+cdfhSs1DVJzBM81yXgUxIkRaez/orlOSIbOXgoB1/AkGS/Oks/YttD4FhMjty//h+8YFUw1BKpBh36ytvtTgbfh1tqD/pFxO/F+xS5UKWppSCjYQHsrJdGjzhnPrylL7kOH3Y85AeeeTVzWfKrQbLoX+8c1Cc+TpTd5kFw9lKvViEfQipWC7WzSiG8pgKEwIDAQAB", this);
+//        billingProcessor.initialize();
 	}
 
 	@Override
@@ -505,10 +533,10 @@ public class AndroidLauncher extends AndroidApplication implements Game.Platform
 		saveGameTimeStarted = System.currentTimeMillis();
 
 		// Sign in silently if possible
-        signInSilently();
+        //signInSilently();
 
         // Ads
-        IronSource.onResume(this);
+//      IronSource.onResume(this);
 	}
 
 	@Override
@@ -518,34 +546,34 @@ public class AndroidLauncher extends AndroidApplication implements Game.Platform
 		saveGameTime += System.currentTimeMillis() - saveGameTimeStarted;
 
 		// Ads
-        IronSource.onPause(this);
+//        IronSource.onPause(this);
 	}
 
     @Override
     protected void onDestroy() {
-        billingProcessor.release();
+//        billingProcessor.release();
 
         super.onDestroy();
     }
 
     @Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(billingProcessor.handleActivityResult(requestCode, resultCode, data))
-            return;
+//        if(billingProcessor.handleActivityResult(requestCode, resultCode, data))
+//            return;
 
-        if (requestCode == RC_SIGN_IN) {
-
-            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-
-            try {
-                GoogleSignInAccount account = task.getResult(ApiException.class);
-                onConnected(account);
-            } catch (ApiException apiException) {
-                reportLogError(TAG, "Failed to sign in", apiException);
-
-                onDisconnected();
-            }
-        }
+//        if (requestCode == RC_SIGN_IN) {
+//
+//            Task<CredentialManager> task = CredentialManager.getSignedInAccountFromIntent(data);
+//
+//            try {
+//                GoogleSignInAccount account = task.getResult(ApiException.class);
+//                onConnected();
+//            } catch (ApiException apiException) {
+//                reportLogError(TAG, "Failed to sign in", apiException);
+//
+//                onDisconnected();
+//            }
+//        }
 
 		super.onActivityResult(requestCode, resultCode, data);
 	}
@@ -553,40 +581,40 @@ public class AndroidLauncher extends AndroidApplication implements Game.Platform
 	// Crashlytics
 	@Override
 	public void reportLog(String source, String text) {
-		Crashlytics.log(source + ": " + text);
+//		Crashlytics.log(source + ": " + text);
 		Log.i(source, text);
 	}
 
 	@Override
 	public void reportLog(String source, String text, Throwable exception) {
-		Crashlytics.log(source + ": " + text);
-		Crashlytics.logException(exception);
+//		Crashlytics.log(source + ": " + text);
+//		Crashlytics.logException(exception);
 		Log.i(source, text, exception);
 	}
 
 	@Override
 	public void reportLogDebug(String source, String text) {
-		Crashlytics.log(source + ": " + text);
+//		Crashlytics.log(source + ": " + text);
 		Log.d(source, text);
 	}
 
 	@Override
 	public void reportLogDebug(String source, String text, Throwable exception) {
-		Crashlytics.log(source + ": " + text);
-		Crashlytics.logException(exception);
+//		Crashlytics.log(source + ": " + text);
+//		Crashlytics.logException(exception);
 		Log.d(source, text, exception);
 	}
 
 	@Override
 	public void reportLogError(String source, String text) {
-		Crashlytics.log(source + ": " + text);
+//		Crashlytics.log(source + ": " + text);
 		Log.e(source, text);
 	}
 
 	@Override
 	public void reportLogError(String source, String text, Throwable exception) {
-		Crashlytics.log(source + ": " + text);
-		Crashlytics.logException(exception);
+//		Crashlytics.log(source + ": " + text);
+//		Crashlytics.logException(exception);
 		Log.e(source, text, exception);
 	}
 
@@ -610,8 +638,8 @@ public class AndroidLauncher extends AndroidApplication implements Game.Platform
 				}
 			} catch (Throwable e) {
                 reportLogError(TAG, "Unable to determine safe area insets", e);
-				Globals.topSafeAreaInset = 0;
-				Globals.bottomSafeAreaInset = 0;
+                Globals.topSafeAreaInset = 0;
+                Globals.bottomSafeAreaInset = 0;
 			}
 		}
 
@@ -691,7 +719,7 @@ public class AndroidLauncher extends AndroidApplication implements Game.Platform
 	@Override
 	public void deleteSaveGame() {
 		// Delete save game
-		Gdx.files.local(Globals.SAVE_FILENAME).delete();
+        Gdx.files.local(Globals.SAVE_FILENAME).delete();
 
         if(isSignedIn()) {
             mSnapshotsClient.open(Globals.SAVE_FILENAME, true, SnapshotsClient.RESOLUTION_POLICY_MOST_RECENTLY_MODIFIED)
@@ -705,6 +733,7 @@ public class AndroidLauncher extends AndroidApplication implements Game.Platform
                         @Override
                         public Task<String> then(@NonNull Task<SnapshotsClient.DataOrConflict<Snapshot>> task) {
                             Snapshot snapshot = task.getResult().getData();
+                            assert snapshot != null;
                             return mSnapshotsClient.delete(snapshot.getMetadata());
                         }
                     })
@@ -721,7 +750,7 @@ public class AndroidLauncher extends AndroidApplication implements Game.Platform
         }
 
         // Reset game time
-		saveGameTime = 0;
+        saveGameTime = 0;
 		saveGameTimeStarted = System.currentTimeMillis();
 	}
 
@@ -742,7 +771,7 @@ public class AndroidLauncher extends AndroidApplication implements Game.Platform
 			public void run() {
 				// If connected, show achievements screen
                 if(isSignedIn()) {
-                    Games.getAchievementsClient(AndroidLauncher.this, mSignedInAccount)
+                    PlayGames.getAchievementsClient(AndroidLauncher.this)
                             .getAchievementsIntent()
                             .addOnSuccessListener(new OnSuccessListener<Intent>() {
                                 @Override
@@ -761,7 +790,8 @@ public class AndroidLauncher extends AndroidApplication implements Game.Platform
 			@Override
 			public void run() {
 				// Start login as not yet logged in
-                startSignInIntent();
+                gamesSignInClient.signIn();
+                //startSignInIntent();
 			}
 		});
 	}
@@ -789,31 +819,31 @@ public class AndroidLauncher extends AndroidApplication implements Game.Platform
 		// nothing
 	}
 
-	// Ads
+	//Ads
     @Override
     public boolean showRewardedVideoAd() {
-        if(IronSource.isRewardedVideoAvailable()) {
-            reportLog(TAG, "Showing Rewarded Video Ad");
-            IronSource.showRewardedVideo();
-            return true;
-        }
-//        else if(IronSource.isOfferwallAvailable()) {
-//            reportLog(TAG, "Showing Offerwall Ads");
-//            IronSource.showOfferwall();
+//        if(IronSource.isRewardedVideoAvailable()) {
+//            reportLog(TAG, "Showing Rewarded Video Ad");
+//            IronSource.showRewardedVideo();
 //            return true;
 //        }
-        else
+////        else if(IronSource.isOfferwallAvailable()) {
+////            reportLog(TAG, "Showing Offerwall Ads");
+////            IronSource.showOfferwall();
+////            return true;
+////        }
+//        else
             return false;
     }
 
     @Override
     public boolean showInterstitialAd() {
-        if(IronSource.isInterstitialReady()) {
-            reportLog(TAG, "Showing Interstitial Ads");
-            IronSource.showInterstitial();
-            return true;
-        }
-        else
+//        if(IronSource.isInterstitialReady()) {
+//            reportLog(TAG, "Showing Interstitial Ads");
+//            IronSource.showInterstitial();
+//            return true;
+//        }
+//        else
             return false;
     }
 
@@ -821,73 +851,73 @@ public class AndroidLauncher extends AndroidApplication implements Game.Platform
     // Analytics
     @Override
     public void analyticsStartLevel(String name) {
-        try {
-            Answers.getInstance().logLevelStart(new LevelStartEvent()
-                    .putLevelName(name)
-            );
-        } catch (Throwable e) {
-            reportLogError(TAG, "analyticsStartLevel failed: " + name, e);
-        }
+//        try {
+//            Answers.getInstance().logLevelStart(new LevelStartEvent()
+//                    .putLevelName(name)
+//            );
+//        } catch (Throwable e) {
+//            reportLogError(TAG, "analyticsStartLevel failed: " + name, e);
+//        }
     }
 
     @Override
     public void analyticsEndLevel(String name, int score, boolean success) {
-        try {
-            LevelEndEvent event = new LevelEndEvent()
-                    .putLevelName(name);
-            if(score != -1) {
-                event.putScore(score);
-                event.putSuccess(success);
-            }
-
-            Answers.getInstance().logLevelEnd(new LevelEndEvent());
-        } catch (Throwable e) {
-            reportLogError(TAG, "analyticsEndLevel failed: " + name + " " + score + " " + success, e);
-        }
+//        try {
+//            LevelEndEvent event = new LevelEndEvent()
+//                    .putLevelName(name);
+//            if(score != -1) {
+//                event.putScore(score);
+//                event.putSuccess(success);
+//            }
+//
+//            Answers.getInstance().logLevelEnd(new LevelEndEvent());
+//        } catch (Throwable e) {
+//            reportLogError(TAG, "analyticsEndLevel failed: " + name + " " + score + " " + success, e);
+//        }
     }
 
     @Override
     public void analyticsEvent(String name) {
-        try {
-            Answers.getInstance().logCustom(new CustomEvent(name));
-        } catch (Throwable e) {
-            reportLogError(TAG, "analyticsEvent failed: " + name, e);
-        }
+//        try {
+//            Answers.getInstance().logCustom(new CustomEvent(name));
+//        } catch (Throwable e) {
+//            reportLogError(TAG, "analyticsEvent failed: " + name, e);
+//        }
     }
 
     @Override
     public void analyticsView(String name, String type, String id) {
-        try {
-            Answers.getInstance().logContentView(new ContentViewEvent()
-                    .putContentName(name)
-                    .putContentType(type)
-                    .putContentId(id)
-            );
-        } catch (Throwable e) {
-            reportLogError(TAG, "analyticsView failed: " + name + " " + type + " " + id, e);
-        }
+//        try {
+//            Answers.getInstance().logContentView(new ContentViewEvent()
+//                    .putContentName(name)
+//                    .putContentType(type)
+//                    .putContentId(id)
+//            );
+//        } catch (Throwable e) {
+//            reportLogError(TAG, "analyticsView failed: " + name + " " + type + " " + id, e);
+//        }
     }
 
     @Override
     public void analyticsValue(String name, String field, float value) {
-        try {
-            CustomEvent event = new CustomEvent(name)
-                    .putCustomAttribute(field, value);
-            Answers.getInstance().logCustom(event);
-        } catch (Throwable e) {
-            reportLogError(TAG, "analyticsValue failed: " + name + " " + field + " " + value, e);
-        }
+//        try {
+//            CustomEvent event = new CustomEvent(name)
+//                    .putCustomAttribute(field, value);
+//            Answers.getInstance().logCustom(event);
+//        } catch (Throwable e) {
+//            reportLogError(TAG, "analyticsValue failed: " + name + " " + field + " " + value, e);
+//        }
     }
 
     @Override
     public void analyticsString(String name, String field, String value) {
-        try {
-            CustomEvent event = new CustomEvent(name)
-                    .putCustomAttribute(field, value);
-            Answers.getInstance().logCustom(event);
-        } catch (Throwable e) {
-            reportLogError(TAG, "analyticsString failed: " + name + " " + field + " " + value, e);
-        }
+//        try {
+//            CustomEvent event = new CustomEvent(name)
+//                    .putCustomAttribute(field, value);
+//            Answers.getInstance().logCustom(event);
+//        } catch (Throwable e) {
+//            reportLogError(TAG, "analyticsString failed: " + name + " " + field + " " + value, e);
+//        }
     }
 
     // Promotion
@@ -1006,12 +1036,12 @@ public class AndroidLauncher extends AndroidApplication implements Game.Platform
 
     @Override
     public void removeAds() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                billingProcessor.purchase(AndroidLauncher.this, GOOGLE_IAP_REMOVE_ADS);
-            }
-        });
+//        runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                billingProcessor.purchase(AndroidLauncher.this, GOOGLE_IAP_REMOVE_ADS);
+//            }
+//        });
     }
 
     @Override
@@ -1029,32 +1059,54 @@ public class AndroidLauncher extends AndroidApplication implements Game.Platform
     }
 
     @Override
-    public void onProductPurchased(@NonNull String productId, @Nullable TransactionDetails details) {
-        if(productId.equals(GOOGLE_IAP_REMOVE_ADS)) {
-            hasRemovedAds = true;
-            checkRemovedAds();
+    public boolean openURI(String URI) {
+        Uri uri = Uri.parse(URI);
+
+        try {
+            Intent intent = new Intent("android.intent.action.VIEW", uri);
+            if (!(this.getContext() instanceof Activity)) {
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            }
+
+            this.startActivity(intent);
+            return true;
+        } catch (ActivityNotFoundException var4) {
+            return false;
         }
     }
 
-    @Override
-    public void onPurchaseHistoryRestored() {
-        Log.d(TAG, "onPurchaseHistoryRestored");
-        for(String sku : billingProcessor.listOwnedProducts())
-            Log.d(TAG, "onPurchaseHistoryRestored owned: " + sku);
-        if(billingProcessor.listOwnedProducts().contains(GOOGLE_IAP_REMOVE_ADS))
-            hasRemovedAds = true;
-    }
+//    @Override
+//    public void onProductPurchased(@NonNull String productId, @Nullable TransactionDetails details) {
+//        if(productId.equals(GOOGLE_IAP_REMOVE_ADS)) {
+//            hasRemovedAds = true;
+//            checkRemovedAds();
+//        }
+//    }
+//
+//    @Override
+//    public void onPurchaseHistoryRestored() {
+//        Log.d(TAG, "onPurchaseHistoryRestored");
+//        for(String sku : billingProcessor.listOwnedProducts())
+//            Log.d(TAG, "onPurchaseHistoryRestored owned: " + sku);
+//        if(billingProcessor.listOwnedProducts().contains(GOOGLE_IAP_REMOVE_ADS))
+//            hasRemovedAds = true;
+//    }
+
+//    @Override
+//    public void onBillingError(int errorCode, @Nullable Throwable error) {
+//        Log.e(TAG, "onBillingError " + errorCode, error);
+//    }
+
+//    @Override
+//    public void onBillingInitialized() {
+//        Log.d(TAG, "onBillingInitialized");
+//        // Restore purchased
+//        billingProcessor.loadOwnedPurchasesFromGoogle();
+//        onPurchaseHistoryRestored();
+//    }
 
     @Override
-    public void onBillingError(int errorCode, @Nullable Throwable error) {
-        Log.e(TAG, "onBillingError " + errorCode, error);
-    }
-
-    @Override
-    public void onBillingInitialized() {
-        Log.d(TAG, "onBillingInitialized");
-        // Restore purchased
-        billingProcessor.loadOwnedPurchasesFromGoogle();
-        onPurchaseHistoryRestored();
+    public void onPointerCaptureChanged(boolean hasCapture) {
+        super.onPointerCaptureChanged(hasCapture);
     }
 }

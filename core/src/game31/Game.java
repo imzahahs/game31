@@ -112,6 +112,8 @@ public class Game extends Sys {
 
         void removeAds();
         void checkRemovedAds();
+
+        boolean openURI(String URI);
     }
 
     public static void analyticsStartLevel(String name) {

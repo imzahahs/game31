@@ -3,5 +3,7 @@
 
     <string name="app_name">Pipe Dreams</string>
     <string name="app_id">204660105102</string>
+    <string translatable="false"  name="game_services_project_id">204660105102</string>
+
 
 </resources>
