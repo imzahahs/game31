@@ -3,6 +3,7 @@ package game31.triggers;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 
+import game31.Game;
 import game31.Globals;
 import game31.Grid;
 import game31.Keyboard;
@@ -546,7 +547,9 @@ public class ACT3 extends Globals {
                                         boolean hasEnjoyedGame = Gdx.app.getPreferences(Globals.PREF_FILENAME).getBoolean(Globals.STATE_HAS_OPINION_ENJOYED, false);
 
                                         if (!hasOpenedDiscord && hasEnjoyedGame) {
-                                            Gdx.net.openURI(Globals.helpDiscordURL);
+                                            //Gdx.net.openURI(Globals.helpDiscordURL);
+                                            Game.game.platform.openURI(Globals.helpDiscordURL);
+
                                             Gdx.app.getPreferences(Globals.PREF_FILENAME).putBoolean(Globals.STATE_HAS_DISCORD_OPENED, true).flush();
                                         }
                                     }

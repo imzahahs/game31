@@ -1,1 +1,10 @@
 include 'desktop', 'android', 'core'
+include ':android'
+include ':asset_pack_videoFiles'
+
+dependencyResolutionManagement {
+    repositories {
+        maven {url 'https://android-sdk.is.com/'}
+//        maven {url 'https://cboost.jfrog.io/artifactory/chartboost-ads/' }
+    }
+}

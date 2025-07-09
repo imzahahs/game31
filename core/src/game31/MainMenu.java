@@ -161,9 +161,6 @@ public class MainMenu extends Menu<Grid> implements OnClick<Grid> {
         public Clickable googlePlayPromptLoginButton;
         public Clickable googlePlayPromptContinueButton;
 
-        public Clickable newGamePlusYesButton;
-        public Clickable newGamePlusNoButton;
-
         // Help menu
         public Clickable helpButton;
         public TextBox helpTitleView;
@@ -221,6 +218,7 @@ public class MainMenu extends Menu<Grid> implements OnClick<Grid> {
     // UI
     private final Builder<Object> builder;
     private Internal s;
+    public boolean optionsBackStackEnable = true;
 
     private final Group particleGroup;
 
@@ -233,7 +231,7 @@ public class MainMenu extends Menu<Grid> implements OnClick<Grid> {
     private boolean isFoundSave = false;
     private boolean isNewGamePlus = false;
 
-    private boolean isShowingSimAd = false;
+//    private boolean isShowingSimAd = false;
 
     private boolean isQueuedOpenAchievements = false;
     private boolean isQueuedStartGame = false;
@@ -268,10 +266,11 @@ public class MainMenu extends Menu<Grid> implements OnClick<Grid> {
 
         if(Gdx.app.getPreferences(Globals.PREF_FILENAME).getBoolean(Globals.STATE_HAS_PLAYED, false)) {
             s.simAdButton.attach();
-            isShowingSimAd = true;
         }
-        else
-            isShowingSimAd = false;
+//            isShowingSimAd = true;
+//        }
+//        else
+//            isShowingSimAd = false;
 
         // Check save
         if(isFoundSave) {
@@ -321,7 +320,7 @@ public class MainMenu extends Menu<Grid> implements OnClick<Grid> {
         s.discordButton.detachWithAnim();
 
         s.googlePlayButton.detachWithAnim();
-        s.removeAdsButton.detachWithAnim();
+//        s.removeAdsButton.detachWithAnim();
 
         s.betaFeedbackGroup.detachWithAnim();
     }
@@ -344,6 +343,9 @@ public class MainMenu extends Menu<Grid> implements OnClick<Grid> {
 //        }
 
         s.privacyPolicyButton.attach();
+
+        optionsBackStackEnable = true;
+
     }
 
     private void refreshSubtitleStatus() {
@@ -363,6 +365,8 @@ public class MainMenu extends Menu<Grid> implements OnClick<Grid> {
     }
 
     private void refreshAdsRemoved() {
+        Globals.grid.mainMenu.informHasRemovedAds(); //28 JUNE 2024: Ads removed by Gabe.
+
         if(Gdx.app.getType() == Application.ApplicationType.Desktop)
             Globals.g_showRealAds = false;
         else {
@@ -370,10 +374,10 @@ public class MainMenu extends Menu<Grid> implements OnClick<Grid> {
             if(Globals.g_showRealAds)
                 Game.game.platform.checkRemovedAds();
         }
-        if(Globals.g_showRealAds && isShowingSimAd)
-            s.removeAdsButton.attach();
-        else
-            s.removeAdsButton.detach();
+//        if(Globals.g_showRealAds && isShowingSimAd)
+//            s.removeAdsButton.attach();
+//        else
+//            s.removeAdsButton.detach();
     }
 
     public void informHasRemovedAds() {
@@ -393,6 +397,9 @@ public class MainMenu extends Menu<Grid> implements OnClick<Grid> {
         s.highQualityVideosButton.detachWithAnim();
         s.privacyPolicyButton.detachWithAnim();
         s.helpBackButton.detachWithAnim();
+
+        optionsBackStackEnable = false;
+
     }
 
 
@@ -410,6 +417,7 @@ public class MainMenu extends Menu<Grid> implements OnClick<Grid> {
 
     private void startGameLoad() {
         hideTitleMenu();
+        optionsBackStackEnable = false;
 
         // Mark as has played, show simulacra promo button next time
         Gdx.app.getPreferences(Globals.PREF_FILENAME).putBoolean(Globals.STATE_HAS_PLAYED, true).flush();
@@ -495,7 +503,6 @@ public class MainMenu extends Menu<Grid> implements OnClick<Grid> {
     @Override
     protected void recreate(Grid grid) {
         super.recreate(grid);
-
         builder.start();
 
         refreshParticles();
@@ -538,7 +545,6 @@ public class MainMenu extends Menu<Grid> implements OnClick<Grid> {
     @Override
     protected void render(Grid grid, float r, float renderTime) {
         super.render(grid, r, renderTime);
-
         if(!s.offShadow.isAttached() && tHeadphonesEndScheduled == Float.MAX_VALUE) {
             if(tKaiganEndScheduled != Float.MAX_VALUE) {
                 // Showing kaigan logo
@@ -652,7 +658,9 @@ public class MainMenu extends Menu<Grid> implements OnClick<Grid> {
         }
 
         if(view == s.betaFeedbackButton) {
-            Gdx.net.openURI(Globals.d_betaFeedbackLink);
+//            Gdx.net.openURI(Globals.d_betaFeedbackLink);
+            Game.game.platform.openURI(Globals.d_betaFeedbackLink);
+
             return;
         }
 
@@ -687,20 +695,25 @@ public class MainMenu extends Menu<Grid> implements OnClick<Grid> {
             // Analytics
             Game.analyticsString(Globals.ANALYTICS_EVENT_SHARED, Globals.ANALYTICS_EVENT_SHARED_FIELD, Globals.ANALYTICS_EVENT_SHARED_TWITTER);
 
-            Gdx.net.openURI(Globals.helpTwitterURL);
+            Game.game.platform.openURI(Globals.helpTwitterURL);
+
+//            Gdx.net.openURI(Globals.helpTwitterURL);
             return;
         }
 
         if(view == s.mailButton) {
-            Gdx.net.openURI(Globals.helpMailURL);
+            Game.game.platform.openURI(Globals.helpMailURL);
+
+//            Gdx.net.openURI(Globals.helpMailURL);
             return;
         }
 
         if(view == s.fbButton) {
             // Analytics
             Game.analyticsString(Globals.ANALYTICS_EVENT_SHARED, Globals.ANALYTICS_EVENT_SHARED_FIELD, Globals.ANALYTICS_EVENT_SHARED_FB);
+            Game.game.platform.openURI(Globals.helpFacebookURL);
 
-            Gdx.net.openURI(Globals.helpFacebookURL);
+//            Gdx.net.openURI(Globals.helpFacebookURL);
             return;
         }
 
@@ -711,16 +724,18 @@ public class MainMenu extends Menu<Grid> implements OnClick<Grid> {
         }
 
         if(view == s.discordButton) {
-            Gdx.net.openURI(Globals.helpDiscordURL);
+//            Gdx.net.openURI(Globals.helpDiscordURL);
+            Game.game.platform.openURI(Globals.helpDiscordURL);
+
             Gdx.app.getPreferences(Globals.PREF_FILENAME).putBoolean(Globals.STATE_HAS_DISCORD_OPENED, true).flush();
             s.discordButton.windowAnimation(null, false, false);
             return;
         }
 
-        if(view == s.removeAdsButton) {
-            Game.game.platform.removeAds();
-            return;
-        }
+//        if(view == s.removeAdsButton) {
+//            Game.game.platform.removeAds();
+//            return;
+//        }
 
         if(view == s.subtitleButton) {
             // Toggle
@@ -739,7 +754,9 @@ public class MainMenu extends Menu<Grid> implements OnClick<Grid> {
 
 
         if(view == s.privacyPolicyButton) {
-            Gdx.net.openURI(Globals.helpPrivacyPolicyURL);
+            Game.game.platform.openURI(Globals.helpPrivacyPolicyURL);
+
+//            Gdx.net.openURI(Globals.helpPrivacyPolicyURL);
             return;
         }
 
@@ -764,14 +781,18 @@ public class MainMenu extends Menu<Grid> implements OnClick<Grid> {
             // Fadeout music
             MusicFadeOutEntity fadeOutEntity = new MusicFadeOutEntity(0, s.tThemeFadeOutTime);
             fadeOutEntity.attach(v);
-            return;
         }
     }
 
     @Override
     protected boolean input(Grid v, int inputType, int key, char character, int scrolledAmount, int pointer, float x, float y, int button) {
-        if(inputType == INPUT_KEY_UP && key == Input.Keys.BACK) {
-            Game.game.platform.exitGame();          // Only on android, go back to homescreen
+        if (inputType == INPUT_KEY_UP && key == Input.Keys.BACK) {
+            if (optionsBackStackEnable) {
+                hideHelpMenu();
+                showTitleMenu();
+            } else {
+                Game.game.platform.exitGame();          // Only on android, go back to homescreen
+            }
             return true;
         }
         return false;

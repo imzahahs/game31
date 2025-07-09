@@ -75,8 +75,8 @@ public class Globals {
     }
 
 
-    public static int buildNumber = 44;
-    public static String version = "1.0." + buildNumber;
+    public static int buildNumber = 48;
+    public static String version = "1.0." + buildNumber; //this gets set in MainActivity.java just before the startGame() call on Android.
 
     public static float MIN_LENGTH = 16f / 9f;          // 16f / 9f
     public static float LENGTH = 18.5f / 9f;
@@ -89,7 +89,8 @@ public class Globals {
     public static float r_liquidCrystalEffectResolution = 1f;
     public static boolean r_highQuality = true;
 
-    public static boolean g_hasAdsRemoved = false;
+//    public static boolean g_hasAdsRemoved = false;
+//    public static boolean g_hasAdsRemoved = true;
 
     public static final String MAIL_BLOCK_TOKEN = "#block#";
     public static final String MAIL_ACTION_PREFIX = "action://";
@@ -139,7 +140,7 @@ public class Globals {
     public static String helpFacebookURL = "https://www.facebook.com/playsimulacra/";
     public static String helpPrivacyPolicyURL = "https://privacypolicies.com/privacy/view/28562127727456bc4d6929b805fa6d5a";
 
-    public static String helpDiscordURL = "http://discord.gg/playsimulacra";
+    public static String helpDiscordURL = "https://discord.com/invite/kaigangames";
 
     public static Grid grid;
 
@@ -201,7 +202,8 @@ public class Globals {
 
     public static int g_teddyTrustSplit = 0;
 
-    public static boolean g_showRealAds = true;
+//    public static boolean g_showRealAds = true; //Ad removed
+    public static boolean g_showRealAds = false;
 
     public static Gson gson = new Gson();
     public static SheetsParser sheets = new SheetsParser();
@@ -340,7 +342,7 @@ public class Globals {
 
     public static float tKeyboardAnimationSpeedMultiplier = 1.0f;       // 1.0f
     public static float tChatTimingMultiplier = 0.9f; // 0.9f;
-    public static boolean allowSkipChatVoice = false;
+//    public static boolean allowSkipChatVoice = false;
     public static float tChatTypingTimeSkipMultiplier = 10f;
 
     public static boolean ignoreSaveErrors = false;

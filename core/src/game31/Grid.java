@@ -49,7 +49,6 @@ import sengine.utils.Universe2D;
 public class Grid extends Universe2D implements LoadingMenu.Handler {
     public static final String TAG = "Grid";
 
-
     public class ScreenCompositor extends Group {
 
         public final OrthographicCamera camera;

@@ -209,6 +209,11 @@ public class DesktopMain implements Game.PlatformInterface, SteamRemoteStorageCa
     }
 
     @Override
+    public boolean openURI(String URI) {
+        return org.lwjgl.Sys.openURL(URI);
+    }
+
+    @Override
     public void reportLog(String source, String text) {
         Gdx.app.log(source, text);
     }

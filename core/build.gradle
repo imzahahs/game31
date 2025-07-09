@@ -1,6 +1,6 @@
 apply plugin: "java"
 
-sourceCompatibility = 1.7
+sourceCompatibility = 1.8
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 sourceSets.main.java.srcDirs = [ "src/" ]
@@ -11,6 +11,6 @@ eclipse.project {
 }
 
 dependencies {
-    compile 'com.google.code.gson:gson:2.8.0'
-    compile 'com.opencsv:opencsv:3.7'
+    implementation 'com.google.code.gson:gson:2.10'
+    implementation 'com.opencsv:opencsv:3.7'
 }

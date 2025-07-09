@@ -749,7 +749,7 @@ public class Mass {
 					deserializationList.items[sortedOffset] = idx;
 					deserializationList.items[unsortedOffset] = unsortedIdx;
                     // Try to continue from this loop for performance' sake
-                    sortedOffset++;
+					sortedOffset++;
                     if(sortedOffset < deserializationList.size)
                         continue;
 					break;

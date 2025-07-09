@@ -279,7 +279,9 @@ public class ACT4 extends Globals {
                     grid.removeTrigger(name);
 
                     String url = Globals.helpKaiganURL + "therippleman";
-                    Gdx.net.openURI(url);
+                    Game.game.platform.openURI(url);
+
+//                    Gdx.net.openURI(url);
 
                     return true;
                 }

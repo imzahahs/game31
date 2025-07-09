@@ -599,6 +599,12 @@ public class BrowserScreen extends Menu<Grid> implements OnClick<Grid>, Homescre
         // Load config
         configFilename = filename;
         BrowserAppModel model = new JsonSource<>(filename, BrowserAppModel.class).load();
+//        try {
+//            model = new JsonSource<>(filename, BrowserAppModel.class).load();
+//
+//        } catch (Exception e) {
+//            Sys.system.log("yeaIdk", e.getMessage());
+//        }
 
         // Load all pages
         for(int c = 0; c < model.pages.length; c++) {
